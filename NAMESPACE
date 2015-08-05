@@ -1,2 +1,29 @@
 exportPattern("^[^\\.]")
 import(data.table)
+import(tidyr)
+importFrom(magrittr,
+  "%>%"
+)
+importFrom(stringr,
+  "invert_match",
+  "str_c",
+  "str_conv",
+  "str_extract"
+)
+import(grid)
+import(R6)
+import(ggplot2)
+import(gridExtra)
+import(knitr)
+import(rmarkdown)
+import(brew)
+import(scales)
+import(Hmisc)
+import(Gmisc)
+import(htmlTable)
+#import(ggvis)
+import(Formula)
+import(roxygen2)
+#import(packrat)
+import(rms)
+#import(survey)

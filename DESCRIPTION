@@ -3,7 +3,30 @@ Title: R Convenience functions
 Version: 0.0.0.1
 Authors@R: person("Richard", "White", email = "r.aubrey.white@gmail.com", role = c("aut", "cre"))
 Description: Convenience functions
-Depends: R (>= 3.1.0), data.table, stringr, R6, ggplot2, dplyr, tidyr, magrittr, grid, gridExtra, knitr, rmarkdown, brew, xtable, scales, Hmisc, Gmisc, htmlTable, ggvis, Formula, roxygen2, packrat, rms, survey
-Imports: data.table
+Depends:
+  R (>= 3.1.0)
+Imports:
+  data.table,
+  tidyr,
+  magrittr,
+  grid,
+  stringr,
+  R6,
+  ggplot2,
+  dplyr,
+  gridExtra,
+  knitr,
+  rmarkdown,
+  brew,
+  scales,
+  Hmisc,
+  Gmisc,
+  htmlTable,
+  ggvis,
+  Formula,
+  roxygen2,
+  packrat,
+  rms,
+  survey
 License: GPL-3
 LazyData: true
