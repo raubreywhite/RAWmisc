@@ -1,8 +1,9 @@
 Package: RAWmisc
-Title: What the Package Does (one line, title case)
+Title: R Convenience functions
 Version: 0.0.0.1
 Authors@R: person("Richard", "White", email = "r.aubrey.white@gmail.com", role = c("aut", "cre"))
 Description: Convenience functions
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.1.0), data.table, stringr, R6, ggplot2, dplyr, magrittr, grid, gridExtra, knitr, rmarkdown, brew, xtable, scales, Hmisc, Gmisc, htmlTable, ggvis, Formula, roxygen2, packrat
+Imports: data.table
 License: GPL-3
 LazyData: true
