@@ -1,0 +1,8 @@
+Package: RAWmisc
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.1
+Authors@R: person("Richard", "White", email = "r.aubrey.white@gmail.com", role = c("aut", "cre"))
+Description: Convenience functions
+Depends: R (>= 3.1.0)
+License: GPL-3
+LazyData: true
