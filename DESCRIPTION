@@ -16,6 +16,8 @@ Imports:
   dplyr,
   gridExtra,
   knitr,
+  knitcitations,
+  bibtex,
   rmarkdown,
   brew,
   scales,
@@ -27,6 +29,8 @@ Imports:
   roxygen2,
   packrat,
   rms,
-  survey
+  survey,
+  miniCRAN,
+  tools
 License: GPL-3
 LazyData: true

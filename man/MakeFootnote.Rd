@@ -2,12 +2,16 @@
 % Please edit documentation in R/ggplot.r
 \name{MakeFootnote}
 \alias{MakeFootnote}
-\title{Makes a footnote on the bottom right hand corner}
+\title{Makes a footnote on the bottom right hand corner
+Taken from Mark Heckmann
+https://ryouready.wordpress.com/2009/02/17/r-good-practice-adding-footnotes-to-graphics/}
 \usage{
 MakeFootnote(footnoteText = strftime(Sys.time(), format = "\%d/\%m/\%Y"),
   size = 1.2, color = "black")
 }
 \description{
 Makes a footnote on the bottom right hand corner
+Taken from Mark Heckmann
+https://ryouready.wordpress.com/2009/02/17/r-good-practice-adding-footnotes-to-graphics/
 }
 

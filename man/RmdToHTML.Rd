@@ -3,12 +3,18 @@
 \name{RmdToHTML}
 \alias{RmdToHTML}
 \title{Uses preset CSS to knit html report
-Also defaults to base64 inline images}
+Also defaults to base64 inline images
+CSS file taken from Max Gordon (http://gforge.se/packages/)
+If pandoc is available, it uses pandoc (and hence bibliography/citations)
+Otherwise uses knitr and no bibliography/citations}
 \usage{
 RmdToHTML(inFile = "", outFile = "")
 }
 \description{
 Uses preset CSS to knit html report
 Also defaults to base64 inline images
+CSS file taken from Max Gordon (http://gforge.se/packages/)
+If pandoc is available, it uses pandoc (and hence bibliography/citations)
+Otherwise uses knitr and no bibliography/citations
 }
 

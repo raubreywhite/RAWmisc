@@ -31,19 +31,19 @@ ggplotFormat <- function(
                                         linetype=3
                                        ))
   }
-  q <- q + theme(legend.key.size 	= unit(legend.key,"lines"))
+  q <- q + theme(legend.key.size 	  = unit(legend.key,"lines"))
   q <- q + theme(legend.key         = element_blank())
-  q <- q + theme(axis.title.x 	= element_text(size=10*sizeMultiplier,vjust=0,colour="black"))
-  q <- q + theme(axis.title.y		= element_text(size=10*sizeMultiplier,angle=90,vjust=0.25,colour="black"))
-  q <- q + theme(axis.text.y		= element_text(size=10*sizeMultiplier,hjust=1,vjust=0.4,colour="black"))
-  q <- q + theme(axis.text.x		= element_text(size=10*sizeMultiplier,hjust=0.5,vjust=1,colour="black",angle=xangle))
+  q <- q + theme(axis.title.x 	    = element_text(size=10*sizeMultiplier,vjust=0,colour="black"))
+  q <- q + theme(axis.title.y		    = element_text(size=10*sizeMultiplier,angle=90,vjust=0.25,colour="black"))
+  q <- q + theme(axis.text.y		    = element_text(size=10*sizeMultiplier,hjust=1,vjust=0.4,colour="black"))
+  q <- q + theme(axis.text.x        = element_text(size=10*sizeMultiplier,hjust=0.5,vjust=1,colour="black",angle=xangle))
   if(xangle!=0){
     q <- q + theme(axis.text.x      = element_text(size=10*sizeMultiplier,hjust=0,vjust=0.5,colour="black",angle=xangle))
   }
-  q <- q + theme(strip.text.y		= element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
-  q <- q + theme(strip.text.x		= element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
-  q <- q + theme(legend.text		= element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
-  q <- q + theme(legend.title		= element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
+  q <- q + theme(strip.text.y       = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
+  q <- q + theme(strip.text.x       = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
+  q <- q + theme(legend.text        = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
+  q <- q + theme(legend.title       = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
   q <- q + theme(legend.position    = "right")
   q <- q + theme(plot.margin        = unit(c(0.5,0.5,1,0.5),"lines"))
   q <- q + theme(plot.title         = element_text(size=14*sizeMultiplier,hjust=0.5,vjust=1))
@@ -52,6 +52,8 @@ ggplotFormat <- function(
 }
 
 #' Makes a footnote on the bottom right hand corner
+#' Taken from Mark Heckmann
+#' https://ryouready.wordpress.com/2009/02/17/r-good-practice-adding-footnotes-to-graphics/
 MakeFootnote <- function(
   footnoteText = strftime(Sys.time(), format="%d/%m/%Y"),
   size = 1.2,

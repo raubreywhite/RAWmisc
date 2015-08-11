@@ -12,6 +12,8 @@ Libraries <- function(
     "dplyr",
     "gridExtra",
     "knitr",
+    "knitcitations",
+    "bibtex",
     "rmarkdown",
     "brew",
     "scales",
