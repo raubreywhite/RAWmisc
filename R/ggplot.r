@@ -36,9 +36,9 @@ FormatGGPlot <- function(
   q <- q + theme(axis.title.x 	    = element_text(size=10*sizeMultiplier,vjust=0,colour="black"))
   q <- q + theme(axis.title.y		    = element_text(size=10*sizeMultiplier,angle=90,vjust=0.25,colour="black"))
   q <- q + theme(axis.text.y		    = element_text(size=10*sizeMultiplier,hjust=1,vjust=0.4,colour="black"))
-  q <- q + theme(axis.text.x        = element_text(size=10*sizeMultiplier,hjust=0.5,vjust=1,colour="black",angle=xangle))
-  if(xangle!=0){
-    q <- q + theme(axis.text.x      = element_text(size=10*sizeMultiplier,hjust=0,vjust=0.5,colour="black",angle=xangle))
+  q <- q + theme(axis.text.x        = element_text(size=10*sizeMultiplier,hjust=0.5,vjust=1,colour="black",angle=xAngle))
+  if(xAngle!=0){
+    q <- q + theme(axis.text.x      = element_text(size=10*sizeMultiplier,hjust=0,vjust=0.5,colour="black",angle=xAngle))
   }
   q <- q + theme(strip.text.y       = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
   q <- q + theme(strip.text.x       = element_text(size=10*sizeMultiplier,hjust=0.5,colour="black"))
