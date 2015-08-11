@@ -1,5 +1,5 @@
 #' Formats ggplot to a more minimalistic style
-ggplotFormat <- function(
+FormatGGPlot <- function(
   q,
   sizeMultiplier = 1,
   legendKey = 1,
@@ -31,7 +31,7 @@ ggplotFormat <- function(
                                         linetype=3
                                        ))
   }
-  q <- q + theme(legend.key.size 	  = unit(legend.key,"lines"))
+  q <- q + theme(legend.key.size 	  = unit(legendKey,"lines"))
   q <- q + theme(legend.key         = element_blank())
   q <- q + theme(axis.title.x 	    = element_text(size=10*sizeMultiplier,vjust=0,colour="black"))
   q <- q + theme(axis.title.y		    = element_text(size=10*sizeMultiplier,angle=90,vjust=0.25,colour="black"))
