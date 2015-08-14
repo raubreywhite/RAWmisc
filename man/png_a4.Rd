@@ -4,7 +4,7 @@
 \alias{png_a4}
 \title{Creates png with default dimensions of A4}
 \usage{
-png_a4(file = "Figure.png", w = 1, h = 1, landscale = FALSE)
+png_a4(file = "Figure.png", w = 1, h = 1, landscape = FALSE)
 }
 \description{
 Creates png with default dimensions of A4

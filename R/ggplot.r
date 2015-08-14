@@ -75,7 +75,7 @@ png_a4 <- function(
   file = "Figure.png",
   w = 1, 
   h = 1, 
-  landscale = FALSE
+  landscape = FALSE
   ){
 
   width <- 2480
