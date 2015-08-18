@@ -40,9 +40,9 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
   pandoc.installed <- system('pandoc -v')==0
   if(pandoc.installed){
-    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDept)
+    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
   } else {
-    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDept)
+    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
   }
 }
 
