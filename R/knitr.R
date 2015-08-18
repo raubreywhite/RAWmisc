@@ -1,4 +1,4 @@
-RMDToHTMLKnitr <- function(inFile="",outFile=""){
+RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
   css <- readChar(css, file.info(css)$size)
   
@@ -11,7 +11,7 @@ RMDToHTMLKnitr <- function(inFile="",outFile=""){
     header = c('<style type="text/css">', css, '</style>'))
 }
 
-RMDToHTMLPandoc <- function(inFile="", outFile=""){
+RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
   
   outFile <- str_split(outFile,"/") %>%
@@ -28,7 +28,7 @@ RMDToHTMLPandoc <- function(inFile="", outFile=""){
     input=inFile,
     output_file=outFile,
     output_dir=outDir,
-    output_format=html_document(toc=TRUE,toc_depth=2,css=css))
+    output_format=html_document(toc=TRUE,toc_depth=tocDepth,css=css))
 }
 
 
@@ -37,12 +37,12 @@ RMDToHTMLPandoc <- function(inFile="", outFile=""){
 #' CSS file taken from Max Gordon (http://gforge.se/packages/)
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
-RmdToHTML <- function(inFile="",outFile=""){
+RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
   pandoc.installed <- system('pandoc -v')==0
   if(pandoc.installed){
-    RMDToHTMLPandoc(inFile=inFile,outFile=outFile)
+    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDept)
   } else {
-    RMDToHTMLKnitr(inFile=inFile,outFile=outFile)
+    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDept)
   }
 }
 

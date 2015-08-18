@@ -14,6 +14,7 @@ FortifyShapeFileNorwegianMunicipalities <- function(){
 
 FortifyShapeFileNorwegianCounties <- function(){
   #data(countyToMunicip)
+  #countyToMunicip[,list(x=.N),by=list(county,countyName)]
   file <- system.file("extdata","counties","NOR_adm1.shp",package="RAWmisc")
   map <- FortifyShapeFile(file, "NAME_1")
   
