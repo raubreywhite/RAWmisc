@@ -1,0 +1,188 @@
+---
+bibliography: references.bib
+csl: american-medical-association.csl
+---
+
+```{r, echo=FALSE, strip.white=FALSE}
+REPLACE <- "REPLACE"
+```
+
+Example citation[@chavent_clustofvar:_2012].
+
+STROBE 2007 (v4) checklist, with abstract format from BMJ Open.
+
+# Title and abstract
+
+Indicate the study's design with a commonly used term in the title or the abstract
+
+Provide in the abstract an informative and balanced summary of what was dnoe and what was foudn
+
+# Abstract
+## Objectives
+
+Clear statement of main study aim and major hypothesis/research question
+
+## Design
+
+Prospective, randomised, blinded, case control
+
+## Setting
+
+Level of care, e.g. Primary, secondary; number of participating centres. Generalise; don't use the name of a specific centre, but give geographical location if important
+
+## Participants
+
+Numbers entering and completing the study; sex and ethnic group is appropriate. Clear definitions of selection, entry and exclusion criteria
+
+## Interventions
+
+What, how, when and how long
+
+## Primary and secondary outcome measures
+
+Planned (i.e. in the protocol) and those finally measured (if different, explain why) - for quantitative studies only
+
+## Results
+
+Main results with (for quantitative studies) 95% confidence intervals and, where appropriate, the exact level of statistical significance and the number need to treat/harm. Whenever possible, state absolute rather than relative riss
+
+## Conclusions
+
+Primary conclusions and their implications, suggest areas for further research if appropriate. Do not go beyond the data in the article
+
+## Where applicable, trial registration: registry and number
+
+# Main Article
+
+## Introduction
+
+### Background/rationale
+
+Explain the scientific background and rationale for the investigation being reported
+
+### Objectives
+
+State specific objectives, including and pre-specified hypotheses
+
+## Methods
+
+### Study design
+
+Present key elements of study design early in the paper
+
+### Setting
+
+Describe the setting, locations, and relevant dates, including periods of recruitment, exposure, follow-up, and data collection
+
+### Participants
+
+* Cohort study - give the eligibility criteria, and the sources and methods of selection of participants. Describe methods of follow-up. For matched studies, give matching criteria and number of exposed and unexposed.
+
+* Case-control study - give the eligibility criteria, and the sources and methods of case ascertainment and control selection. Give the rationale for the choice of cases and controls. For matched studies, give matching criteria and the number of controls per case.
+
+* Cross-sectional study - give the eligibility criteria, and the sources and methods of selection of participants
+
+### Variables
+
+Clearly define all outcomes, exposures, predictors, potential confounders, and effect modifiers. Give diagnostic criteria, if applicable.
+
+### Data sources/measurement
+
+For each variable of interest, give sources of data and details of methods of assessment (measurement). Describe comparability of assessment methods if there is more than one group.
+
+### Bias
+
+Describe any efforts to address potential sources of bias
+
+### Study size
+
+Explain how the study size was arrived at
+
+### Quantitative variables
+
+Explain how quantitative variables were handled in the analyses. If applicable, describe which groupings were chosen and why
+
+### Statistical methods
+
+* Describe all statistical methods,including those used to control for confounding
+
+* Describe any methods used to examine subgroups and interactions
+
+* Explain how missing data were addressed
+
+* Cohort study - if applicable, explain how loss to follow-up was addressed
+
+* Case-control study - if applicable, explain how matching of cases and controls was addressed
+
+* Cross-sectional study - if applicable, describe analytical methods taking account of sampling strategy
+
+* Describe any sensitivity analyses
+
+## Results
+
+### Participants
+
+* Report numbers of individuals at each stage of study - eg numbers potentially eligible, examined for eligibility, confirmed eligible, included in the study, completing follow-up, and analysed
+
+* Give reasons for non-participation at each stage
+
+* Consider use of a flow diagram
+
+### Descriptive data
+
+* Give characteristics of study participants (eg demographic, clinical, social) and information on exposures and potential confounders
+
+* Indicate number of participants with missing data for each variable of interest
+
+* Cohort study - summarise follow-up time (e.g. average and total amount)
+
+### Outcome data
+
+* Cohort study - report numbers of outcome events or summary measures over time
+
+* Case-control study - report numbers in each exposure category, or summary measures of exposure
+
+* Cross-sectional study - report numbers of outcome events or summary measures
+
+### Main results
+
+* Give unadjusted estimates and, if applicable, confounder-adjusted estimates and their precision (eg 95% confidence interval). Make clear which confounders were adjusted for and why they were included
+
+* Report category boundaries when continuous variables were categorized
+
+* If relevant, consider translating estimates of relative risk into absolute risk for a meaningful time period
+
+### Other analyses
+
+Report other analyses done - eg analyses of subgroups and interactions, and sensitivity analyses
+
+## Discussion
+
+### Key results
+
+Summarise key results with reference to study objectives
+
+### Limitations
+
+Discuss limitations of the study, taking into account sources of potential bias or imprecision. Discuss both direction and magnitude of any potential bias
+
+### Interpretation
+
+Give a cautious overall interpretation of results considering objectives, limitations, multiplicity of analyses, results from similar studies, and other relevant evidence
+
+### Generalisability
+
+Discuss the generalisability (external validity) of the study results
+
+## Other information
+
+### Funding
+
+Give the source of funding and the role of the funders for the present study and, if applicable, for the original study on which the present article is based
+
+## Figures
+
+![img](../../../results/test.png)
+
+## References
+
