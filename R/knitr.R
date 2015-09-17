@@ -1,3 +1,24 @@
+PandocInstalled <- function(){
+  pandoc.installed <- system('pandoc -v')==0
+  if(pandoc.installed) return(TRUE)
+
+  rstudio.environment.installed <- Sys.getenv("RSTUDIO_PANDOC")
+  if(rstudio.environment.installed!=""){
+    rstudio.environment.installed <- paste0('"',rstudio.environment.installed,'" -v')
+    rstudio.environment.installed <- system(rstudio.environment.installed)==0
+    rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc" -v')==0
+  } else rstudio.environment.installed <- FALSE
+  if(rstudio.environment.installed) return(TRUE)
+  
+  rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc" -v')==0
+  if(rstudio.pandoc.installed){
+    Sys.setenv(RSTUDIO_PANDOC="C:/Program Files/RStudio/bin/pandoc") 
+  }
+  if(rstudio.pandoc.installed) return(TRUE)
+
+  return(FALSE)
+}
+
 RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
   css <- readChar(css, file.info(css)$size)
@@ -38,12 +59,7 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
 RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
-  rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc" -v')==0
-  if(rstudio.pandoc.installed){
-    Sys.setenv(RSTUDIO_PANDOC="C:/Program Files/RStudio/bin/pandoc") 
-  }
-  pandoc.installed <- system('pandoc -v')==0
-  if(pandoc.installed | rstudio.pandoc.installed){
+  if(PandocInstalled()){
     RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
   } else {
     RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
@@ -56,29 +72,21 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
 RmdToDOCX <- function(inFile="",outFile="", tocDepth=2){
-  rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc" -v')==0
-  if(rstudio.pandoc.installed){
-    Sys.setenv(RSTUDIO_PANDOC="C:/Program Files/RStudio/bin/pandoc")
-  }
-  pandoc.installed <- system('pandoc -v')==0
-  if(pandoc.installed | rstudio.pandoc.installed){
-    outFile <- str_split(outFile,"/") %>%
-      unlist
-    if(length(outFile)==1){
-      outDir <- getwd()
-    } else {
-      outDir <- file.path(getwd(),outFile[-length(outFile)])
-      outFile <- outFile[length(outFile)]
-      
-    }
-    
-    rmarkdown::render(
-      input=inFile,
-      output_file=outFile,
-      output_dir=outDir,
-      output_format=docx_document(toc=TRUE,toc_depth=tocDepth))
+  if(!PandocInstalled()) stop("pandoc not installed")
+
+  outFile <- str_split(outFile,"/") %>%
+    unlist
+  if(length(outFile)==1){
+    outDir <- getwd()
   } else {
-    stop("pandoc not installed")
+    outDir <- file.path(getwd(),outFile[-length(outFile)])
+    outFile <- outFile[length(outFile)]
   }
+    
+  rmarkdown::render(
+    input=inFile,
+    output_file=outFile,
+    output_dir=outDir,
+    output_format=docx_document(toc=TRUE,toc_depth=tocDepth))
 }
 
