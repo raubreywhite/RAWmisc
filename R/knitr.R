@@ -67,6 +67,9 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' Otherwise uses knitr and no bibliography/citations
 RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
   if(copyFromReports){
+    if(!stringr::str_detect(inFile,"^reports/")){
+      stop("inFile does not start with reports/ and you are using copyFromReports=TRUE")
+    }
     file.copy(inFile,gsub("^reports/","",inFile))
     inFile <- gsub("^reports/","",inFile)
   }
