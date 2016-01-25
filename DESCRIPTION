@@ -1,6 +1,6 @@
 Package: RAWmisc
 Title: R Convenience functions
-Version: 0.0.12
+Version: 0.0.13
 Authors@R: person("Richard", "White", email = "r.aubrey.white@gmail.com", role = c("aut", "cre"))
 Description: Convenience functions
 Depends:
