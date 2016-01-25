@@ -74,11 +74,13 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
     inFile <- gsub("^reports/","",inFile)
   }
   
-  if(PandocInstalled()){
-    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
-  } else {
-    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
-  }
+  try({
+   if(PandocInstalled()){
+      RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+    } else {
+      RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+    }
+  },TRUE)
   
   if(copyFromReports){
     file.remove(inFile)
