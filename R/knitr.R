@@ -70,7 +70,7 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
     if(!stringr::str_detect(inFile,"^reports/")){
       stop("inFile does not start with reports/ and you are using copyFromReports=TRUE")
     }
-    file.copy(inFile,gsub("^reports/","",inFile))
+    file.copy(inFile,gsub("^reports/","",inFile), recursive=TRUE)
     inFile <- gsub("^reports/","",inFile)
   }
   
