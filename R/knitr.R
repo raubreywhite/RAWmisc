@@ -40,7 +40,7 @@ RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2){
 RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
   
-  outFile <- str_split(outFile,"/") %>%
+  outFile <- stringr::str_split(outFile,"/") %>%
     unlist
   if(length(outFile)==1){
     outDir <- getwd()
@@ -79,7 +79,7 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
 RmdToDOCX <- function(inFile="",outFile="", tocDepth=2){
   if(!PandocInstalled()) stop("pandoc not installed")
 
-  outFile <- str_split(outFile,"/") %>%
+  outFile <- stringr::str_split(outFile,"/") %>%
     unlist
   if(length(outFile)==1){
     outDir <- getwd()
