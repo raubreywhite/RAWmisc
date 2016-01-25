@@ -46,8 +46,13 @@ RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FAL
   }
 }
 
-RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
+RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2, copyFromReports=FALSE){
   css <- system.file("extdata","custom.css",package="RAWmisc")
+  
+  if(copyFromReports){
+    file.copy(inFile,gsub("^results/","",inFile))
+    inFile <- gsub("^results/","",inFile)
+  }
   
   outFile <- stringr::str_split(outFile,"/") %>%
     unlist
@@ -64,6 +69,10 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
     output_file=outFile,
     output_dir=outDir,
     output_format=html_document(toc=TRUE,toc_depth=tocDepth,css=css))
+    
+  if(copyFromReports){
+    file.remove(inFile)
+  }
 }
 
 
@@ -72,11 +81,11 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' CSS file taken from Max Gordon (http://gforge.se/packages/)
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
-RmdToHTML <- function(inFile="",outFile="", tocDepth=2){
+RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
   if(PandocInstalled()){
-    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth, copyFromReports=copyFromReports)
   } else {
-    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth, copyFromReports=copyFromReports)
   }
 }
 
