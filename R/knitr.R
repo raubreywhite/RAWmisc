@@ -24,35 +24,22 @@ PandocInstalled <- function(){
   return(FALSE)
 }
 
-RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
+RMDToHTMLKnitr <- function(inFile="",outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
   css <- readChar(css, file.info(css)$size)
   
   opts_knit$set(upload.fun=image_uri)
-  
-  if(copyFromReports){
-    file.copy(inFile,gsub("^results/","",inFile))
-    inFile <- gsub("^results/","",inFile)
-  }
   
   knit2html(
     inFile,
     outFile,
     options=c("toc", markdown::markdownHTMLOptions(TRUE)),
     header = c('<style type="text/css">', css, '</style>'))
-    
-  if(copyFromReports){
-    file.remove(inFile)
-  }
+
 }
 
-RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2, copyFromReports=FALSE){
+RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
   css <- system.file("extdata","custom.css",package="RAWmisc")
-  
-  if(copyFromReports){
-    file.copy(inFile,gsub("^results/","",inFile))
-    inFile <- gsub("^results/","",inFile)
-  }
   
   outFile <- stringr::str_split(outFile,"/") %>%
     unlist
@@ -70,9 +57,6 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2, copyFromReports=F
     output_dir=outDir,
     output_format=html_document(toc=TRUE,toc_depth=tocDepth,css=css))
     
-  if(copyFromReports){
-    file.remove(inFile)
-  }
 }
 
 
@@ -82,10 +66,19 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2, copyFromReports=F
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
 RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
+  if(copyFromReports){
+    file.copy(inFile,gsub("^reports/","",inFile))
+    inFile <- gsub("^reports/","",inFile)
+  }
+  
   if(PandocInstalled()){
-    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth, copyFromReports=copyFromReports)
+    RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
   } else {
-    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth, copyFromReports=copyFromReports)
+    RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+  }
+  
+  if(copyFromReports){
+    file.remove(inFile)
   }
 }
 
