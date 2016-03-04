@@ -67,7 +67,7 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' Otherwise uses knitr and no bibliography/citations
 RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   if(!is.null(copyFrom)){
-    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/")){
+    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/"))){
       stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
     }
     file.copy(inFile,gsub(paste0("^",copyFrom,"/"),"",inFile), overwrite=TRUE)
@@ -82,6 +82,45 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
     }
   },TRUE)
   
+  if(copyFrom){
+    file.remove(inFile)
+  }
+}
+
+RmdToPres <- function(inFile = "", outFile = "", copyFrom=NULL){
+  if(!is.null(copyFrom)){
+    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/"))){
+      stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
+    }
+    file.copy(inFile,gsub(paste0("^",copyFrom,"/"),"",inFile), overwrite=TRUE)
+    inFile <- gsub(paste0("^",copyFrom,"/"),"",inFile)
+  }
+  try({
+    if (RAWmisc::PandocInstalled()) {
+      outFile <- unlist(stringr::str_split(outFile, "/"))
+      if (length(outFile) == 1) {
+        outDir <- getwd()
+      } else {
+        outDir <- file.path(getwd(), outFile[-length(outFile)])
+        outFile <- outFile[length(outFile)]
+      }
+      unlink(paste0(outDir,"/pres_files"),recursive=TRUE,force=TRUE)
+      
+      revealjs_path <- system.file("reveal.js-3.2.0", package = "revealjs")
+      system(paste0("robocopy ",revealjs_path," ",outDir,"/pres_files/reveal.js-3.2.0 /e /MT:32"))
+      
+      rmarkdown::render(input=inFile, output_file=outFile, output_dir=outDir,
+                        output_format=revealjs::revealjs_presentation(
+                          theme="night",
+                          highlight="default",
+                          smart=FALSE))
+      
+      unlink(paste0(outDir,"/pres_files"),recursive=TRUE,force=TRUE)
+    }
+    else {
+      
+    }
+  }, TRUE)
   if(copyFrom){
     file.remove(inFile)
   }
