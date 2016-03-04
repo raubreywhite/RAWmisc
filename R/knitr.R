@@ -82,7 +82,7 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
     }
   },TRUE)
   
-  if(copyFrom){
+   if(!is.null(copyFrom)){
     file.remove(inFile)
   }
 }
@@ -121,7 +121,7 @@ RmdToPres <- function(inFile = "", outFile = "", copyFrom=NULL){
       
     }
   }, TRUE)
-  if(copyFrom){
+   if(!is.null(copyFrom)){
     file.remove(inFile)
   }
 }
