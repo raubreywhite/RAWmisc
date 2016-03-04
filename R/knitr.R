@@ -65,13 +65,13 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' CSS file taken from Max Gordon (http://gforge.se/packages/)
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
-RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
-  if(copyFromReports){
-    if(!stringr::str_detect(inFile,"^reports/")){
-      stop("inFile does not start with reports/ and you are using copyFromReports=TRUE")
+RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
+  if(!is.null(copyFrom)){
+    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/")){
+      stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
     }
-    file.copy(inFile,gsub("^reports/","",inFile), overwrite=TRUE)
-    inFile <- gsub("^reports/","",inFile)
+    file.copy(inFile,gsub(paste0("^",copyFrom,"/"),"",inFile), overwrite=TRUE)
+    inFile <- gsub(paste0("^",copyFrom,"/"),"",inFile)
   }
   
   try({
@@ -82,7 +82,7 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFromReports=FALSE){
     }
   },TRUE)
   
-  if(copyFromReports){
+  if(copyFrom){
     file.remove(inFile)
   }
 }
