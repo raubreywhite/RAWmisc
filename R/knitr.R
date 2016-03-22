@@ -65,7 +65,7 @@ RMDToHTMLPandoc <- function(inFile="", outFile="", tocDepth=2){
 #' CSS file taken from Max Gordon (http://gforge.se/packages/)
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
-RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
+RmdToHTMLDOCX <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   if(!is.null(copyFrom)){
     if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/"))){
       stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
@@ -75,12 +75,79 @@ RmdToHTML <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   }
   
   try({
-   if(PandocInstalled()){
-      RMDToHTMLPandoc(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
-    } else {
-      RMDToHTMLKnitr(inFile=inFile,outFile=outFile, tocDepth=tocDepth)
+    if (RAWmisc::PandocInstalled()) {
+      outFile <- unlist(stringr::str_split(outFile, "/"))
+      if (length(outFile) == 1) {
+        outDir <- getwd()
+      } else {
+        outDir <- file.path(getwd(), outFile[-length(outFile)])
+        outFile <- outFile[length(outFile)]
+      }
+      css <- system.file("extdata","custom.css",package="RAWmisc")
+      
+      rmarkdown::render(
+        input=inFile,
+        output_file=outFile,
+        output_dir=outDir,
+        output_format=html_document(toc=TRUE,toc_depth=tocDepth,css=css))
     }
-  },TRUE)
+    else {
+      
+    }
+  }, TRUE)
+  
+   if(!is.null(copyFrom)){
+    file.remove(inFile)
+  }
+}
+
+RmdToHTMLDOCX <- function(inFile="",
+  outFile="", 
+  tocDepth=2,
+  toc_float=FALSE,
+  number_sections=FALSE,
+  fig_width=7,
+  fig_height=5,
+  fig_retina = if (!fig_caption) 2,
+  fig_caption = TRUE,
+  dev = 'png',
+  code_folding = c("none", "show", "hide"),
+  smart = TRUE,
+  self_contained = TRUE,
+  theme = "default",
+  highlight = "default",
+  mathjax = "default",
+  template = "default", 
+  copyFrom=NULL){
+  if(!is.null(copyFrom)){
+    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/"))){
+      stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
+    }
+    file.copy(inFile,gsub(paste0("^",copyFrom,"/"),"",inFile), overwrite=TRUE)
+    inFile <- gsub(paste0("^",copyFrom,"/"),"",inFile)
+  }
+  
+  try({
+    if (RAWmisc::PandocInstalled()) {
+      outFile <- unlist(stringr::str_split(outFile, "/"))
+      if (length(outFile) == 1) {
+        outDir <- getwd()
+      } else {
+        outDir <- file.path(getwd(), outFile[-length(outFile)])
+        outFile <- outFile[length(outFile)]
+      }
+      css <- system.file("extdata","custom.css",package="RAWmisc")
+      
+      rmarkdown::render(
+        input=inFile,
+        output_file=outFile,
+        output_dir=outDir,
+        output_format=html_document(toc=TRUE,toc_depth=tocDepth,css=css))
+    }
+    else {
+      
+    }
+  }, TRUE)
   
    if(!is.null(copyFrom)){
     file.remove(inFile)
