@@ -101,7 +101,7 @@ RmdToHTMLDOCX <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   }
 }
 
-RmdToHTMLDOCX <- function(
+RmdToHTML <- function(
   inFile="",
   outFile="", 
   tocDepth=2,
