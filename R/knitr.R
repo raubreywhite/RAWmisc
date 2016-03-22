@@ -101,9 +101,9 @@ RmdToHTMLDOCX <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   }
 }
 
-RMDToHTML <- function (inFile = "", outFile = "", copyFrom = NULL, tocDepth = 2, toc_float = TRUE, 
+RmdToHTML <- function (inFile = "", outFile = "", copyFrom = NULL, tocDepth = 2, toc_float = TRUE, 
                number_sections = FALSE, fig_width = 7, fig_height = 5, fig_retina = if (!fig_caption) 2, 
-               fig_caption = TRUE, dev = "png", code_folding = c("none", "show", "hide"), smart = TRUE, self_contained = TRUE, 
+               fig_caption = FALSE, dev = "png", code_folding = c("none", "show", "hide"), smart = TRUE, self_contained = TRUE, 
                theme = "paper", highlight = "default", mathjax = "default", 
                template = "default", includes=NULL) 
 {
