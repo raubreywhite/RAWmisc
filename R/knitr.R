@@ -101,72 +101,48 @@ RmdToHTMLDOCX <- function(inFile="",outFile="", tocDepth=2, copyFrom=NULL){
   }
 }
 
-RmdToHTML <- function(
-  inFile="",
-  outFile="", 
-  tocDepth=2,
-  toc_float=FALSE,
-  number_sections=FALSE,
-  fig_width=7,
-  fig_height=5,
-  fig_retina = if (!fig_caption) 2,
-  fig_caption = TRUE,
-  dev = 'png',
-  code_folding = c("none", "show", "hide"),
-  smart = TRUE,
-  self_contained = TRUE,
-  theme = "default",
-  highlight = "default",
-  mathjax = "default",
-  template = "default", 
-  copyFrom=NULL){
-  if(!is.null(copyFrom)){
-    if(!stringr::str_detect(inFile,paste0("^",copyFrom,"/"))){
-      stop(paste0("inFile does not start with ",copyFrom,"/ and you are using copyFrom=",copyFrom))
+RMDToHTML <- function (inFile = "", outFile = "", copyFrom = NULL, tocDepth = 2, toc_float = TRUE, 
+               number_sections = FALSE, fig_width = 7, fig_height = 5, fig_retina = if (!fig_caption) 2, 
+               fig_caption = TRUE, dev = "png", code_folding = c("none", "show", "hide"), smart = TRUE, self_contained = TRUE, 
+               theme = "paper", highlight = "default", mathjax = "default", 
+               template = "default", includes=NULL) 
+{
+  if (!is.null(copyFrom)) {
+    if (!stringr::str_detect(inFile, paste0("^", copyFrom, 
+                                            "/"))) {
+      stop(paste0("inFile does not start with ", copyFrom, 
+                  "/ and you are using copyFrom=", copyFrom))
     }
-    file.copy(inFile,gsub(paste0("^",copyFrom,"/"),"",inFile), overwrite=TRUE)
-    inFile <- gsub(paste0("^",copyFrom,"/"),"",inFile)
+    file.copy(inFile, gsub(paste0("^", copyFrom, "/"), "", 
+                           inFile), overwrite = TRUE)
+    inFile <- gsub(paste0("^", copyFrom, "/"), "", inFile)
   }
-  
   try({
     if (RAWmisc::PandocInstalled()) {
       outFile <- unlist(stringr::str_split(outFile, "/"))
       if (length(outFile) == 1) {
         outDir <- getwd()
-      } else {
+      }
+      else {
         outDir <- file.path(getwd(), outFile[-length(outFile)])
         outFile <- outFile[length(outFile)]
       }
-      css <- system.file("extdata","custom.css",package="RAWmisc")
       
-      rmarkdown::render(
-        input=inFile,
-        output_file=outFile,
-        output_dir=outDir,
-        output_format=html_document(
-          tocDepth=tocDepth,
-          toc_float=toc_float,
-          number_sections=number_sections,
-          fig_width=fig_width,
-          fig_height=fig_height,
-          fig_retina = fig_retina,
-          fig_caption = fig_caption,
-          dev = dev,
-          code_folding = code_folding,
-          smart = smart,
-          self_contained = self_contained,
-          theme =theme,
-          highlight = highlight,
-          mathjax = mathjax,
-          template = template
-  ))
+      output_format <- rmarkdown::html_document(toc=TRUE, tocDepth = tocDepth, 
+                                           toc_float = toc_float, number_sections = number_sections, 
+                                           fig_width = fig_width, fig_height = fig_height, 
+                                           fig_retina = fig_retina, fig_caption = fig_caption, 
+                                           dev = dev, code_folding = code_folding, smart = smart, 
+                                           self_contained = self_contained, theme = theme, 
+                                           highlight = highlight, mathjax = mathjax, template = template, includes=includes)
+                                           
+      rmarkdown::render(input = inFile, output_file = outFile, 
+                        output_dir = outDir, output_format =output_format)
     }
     else {
-      
     }
   }, TRUE)
-  
-   if(!is.null(copyFrom)){
+  if (!is.null(copyFrom)) {
     file.remove(inFile)
   }
 }
