@@ -105,7 +105,7 @@ RmdToHTML <- function (inFile = "", outFile = "", copyFrom = NULL, tocDepth = 2,
                number_sections = FALSE, fig_width = 7, fig_height = 5, fig_retina = if (!fig_caption) 2, 
                fig_caption = FALSE, dev = "png", code_folding = c("none", "show", "hide"), smart = TRUE, self_contained = TRUE, 
                theme = "paper", highlight = "default", mathjax = "default", 
-               template = "default", includes=NULL) 
+               template = "default", css=NULL, includes=NULL) 
 {
   if (!is.null(copyFrom)) {
     if (!stringr::str_detect(inFile, paste0("^", copyFrom, 
@@ -134,7 +134,8 @@ RmdToHTML <- function (inFile = "", outFile = "", copyFrom = NULL, tocDepth = 2,
                                            fig_retina = fig_retina, fig_caption = fig_caption, 
                                            dev = dev, code_folding = code_folding, smart = smart, 
                                            self_contained = self_contained, theme = theme, 
-                                           highlight = highlight, mathjax = mathjax, template = template, includes=includes)
+                                           highlight = highlight, mathjax = mathjax, template = template, 
+                                           css= css, includes=includes)
                                            
       rmarkdown::render(input = inFile, output_file = outFile, 
                         output_dir = outDir, output_format =output_format)
