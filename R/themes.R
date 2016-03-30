@@ -10,7 +10,8 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
     axis.text =          element_text(size = rel(0.8), colour = "black"),
     strip.text =         element_text(size = rel(0.8), colour = "black"),
     
-    axis.line =          element_line(colour="green",size=20),
+    axis.line.x =        element_line(size=base_size/20),
+    axis.line.y =        element_line(size=base_size/20),
     axis.text.x =        element_text(vjust = 1),
     axis.text.y =        element_text(hjust = 1),
     axis.ticks =         element_line(),
@@ -67,7 +68,8 @@ theme_SMAO45 <- function(base_size = 12, base_family = "") {
     axis.text =          element_text(size = rel(0.8), colour = "black"),
     strip.text =         element_text(size = rel(0.8), colour = "black"),
     
-    axis.line =          element_line(colour = "black", size = 0.2),
+    axis.line.x =        element_line(size=base_size/20),
+    axis.line.y =        element_line(size=base_size/20),
     axis.text.x =        element_text(vjust = 1,angle=-45,hjust=0),
     axis.text.y =        element_text(hjust = 1),
     axis.ticks =         element_line(colour = "black", size = 0.2),
