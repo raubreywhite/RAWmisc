@@ -1,26 +1,20 @@
 PandocInstalled <- function(){
-  sink(tempfile())
-  pandoc.installed <- system('pandoc -v')==0
-  sink()
+  suppressWarnings(pandoc.installed <- system('pandoc')==0)
   if(pandoc.installed) return(TRUE)
-  
+
   rstudio.environment.installed <- Sys.getenv("RSTUDIO_PANDOC")
   if(rstudio.environment.installed!=""){
-    rstudio.environment.installed <- paste0('"',rstudio.environment.installed,'/pandoc" -v')
-    sink(tempfile())
-    rstudio.environment.installed <- system(rstudio.environment.installed)==0
-    sink()
+    rstudio.environment.installed <- paste0('"',rstudio.environment.installed,'/pandoc"')
+    suppressWarnings(rstudio.environment.installed <- system(rstudio.environment.installed)==0)
   } else rstudio.environment.installed <- FALSE
   if(rstudio.environment.installed) return(TRUE)
-  
-  sink(tempfile())
-  rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc" -v')==0
-  sink()
+
+  suppressWarnings(rstudio.pandoc.installed <- system('"C:/Program Files/RStudio/bin/pandoc/pandoc"')==0)
   if(rstudio.pandoc.installed){
-    Sys.setenv(RSTUDIO_PANDOC="C:/Program Files/RStudio/bin/pandoc") 
+    Sys.setenv(RSTUDIO_PANDOC="C:/Program Files/RStudio/bin/pandoc")
   }
   if(rstudio.pandoc.installed) return(TRUE)
-  
+
   return(FALSE)
 }
 
