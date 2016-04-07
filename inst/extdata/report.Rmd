@@ -1,13 +1,6 @@
----
-bibliography: references.bib
-csl: american-medical-association.csl
----
-
 ```{r, echo=FALSE, strip.white=FALSE}
 REPLACE <- "REPLACE"
 ```
-
-Example citation[@chavent_clustofvar:_2012].
 
 STROBE 2007 (v4) checklist, with abstract format from BMJ Open.
 
