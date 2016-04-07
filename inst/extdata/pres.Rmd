@@ -1,0 +1,25 @@
+---
+title: "Expanding traditional variable selection methods using LARS, LASSO, Ridge, and Elastic-Net"
+author: "Richard White<br>SMAO/Folkehelseinstituttet"
+date: "2016-03-04"
+output: 
+  revealjs::revealjs_presentation:
+    theme: black
+    self_contained: true
+---
+
+## Our problems
+
+- Food outbreak
+    - Many exposures to food products
+- Risk factors
+    - Is playing with dogs/cats/rats a risk factor for campylobacter infection?
+    - Is owning a dog/cat/bird a risk factor for campylobacter infection?
+- Gene analyses
+    - Which genes are associated with the outcome?
+
+## Traditional methods
+
+- (Many) univariable analyses
+- Forwards/backwards stepwise selection
+- Everything in the same model
