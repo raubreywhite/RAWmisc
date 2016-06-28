@@ -186,22 +186,38 @@ RmdToPres <- function(inFile = "", outFile = "", copyFrom=NULL){
 #' CSS file taken from Max Gordon (http://gforge.se/packages/)
 #' If pandoc is available, it uses pandoc (and hence bibliography/citations)
 #' Otherwise uses knitr and no bibliography/citations
-RmdToDOCX <- function(inFile="",outFile="", tocDepth=2){
-  if(!PandocInstalled()) stop("pandoc not installed")
-
-  outFile <- stringr::str_split(outFile,"/") %>%
-    unlist
-  if(length(outFile)==1){
-    outDir <- getwd()
-  } else {
-    outDir <- file.path(getwd(),outFile[-length(outFile)])
-    outFile <- outFile[length(outFile)]
+RmdToDOCX <- function (inFile = "", outFile = "", tocDepth = 2, copyFrom = NULL) 
+{
+  if (!is.null(copyFrom)) {
+    if (!stringr::str_detect(inFile, paste0("^", copyFrom, 
+                                            "/"))) {
+      stop(paste0("inFile does not start with ", copyFrom, 
+                  "/ and you are using copyFrom=", copyFrom))
+    }
+    file.copy(inFile, gsub(paste0("^", copyFrom, "/"), "", 
+                           inFile), overwrite = TRUE)
+    inFile <- gsub(paste0("^", copyFrom, "/"), "", inFile)
   }
-    
-  rmarkdown::render(
-    input=inFile,
-    output_file=outFile,
-    output_dir=outDir,
-    output_format=docx_document(toc=TRUE,toc_depth=tocDepth))
+  try({
+    if (RAWmisc::PandocInstalled()) {
+      outFile <- unlist(stringr::str_split(outFile, "/"))
+      if (length(outFile) == 1) {
+        outDir <- getwd()
+      }
+      else {
+        outDir <- file.path(getwd(), outFile[-length(outFile)])
+        outFile <- outFile[length(outFile)]
+      }
+      css <- system.file("extdata", "custom.css", package = "RAWmisc")
+      rmarkdown::render(input = inFile, output_file = outFile, 
+                        output_dir = outDir, output_format = rmarkdown::word_document(toc = TRUE, 
+                                                                                      toc_depth = tocDepth))
+    }
+    else {
+    }
+  }, TRUE)
+  if (!is.null(copyFrom)) {
+    file.remove(inFile)
+  }
 }
 
