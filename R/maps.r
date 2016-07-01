@@ -11,7 +11,7 @@ FortifyShapeFileNorwegianMunicipalities <- function(){
   map <
   return(map)
 }
-
+ 
 FortifyShapeFileNorwegianCounties <- function(){
   #data(countyToMunicip)
   #countyToMunicip[,list(x=.N),by=list(county,countyName)]
@@ -19,7 +19,7 @@ FortifyShapeFileNorwegianCounties <- function(){
   map <- FortifyShapeFile(file, "NAME_1")
   
   map$county <- ""
-  map$county[map$id=="Ãstfold"] <- "county01"
+  map$county[map$id=="Ãƒstfold"] <- "county01"
   map$county[map$id=="Akershus"] <- "county02"
   map$county[map$id=="Oslo"] <- "county03"
   map$county[map$id=="Hedmark"] <- "county04"
@@ -32,9 +32,9 @@ FortifyShapeFileNorwegianCounties <- function(){
   map$county[map$id=="Rogaland"] <- "county11"
   map$county[map$id=="Hordaland"] <- "county12"
   map$county[map$id=="Sogn og Fjordane"] <- "county14"
-  map$county[map$id=="Møre og Romsdal"] <- "county15"
-  map$county[map$id=="Sør-Trøndelag"] <- "county16"
-  map$county[map$id=="Nord-Trøndelag"] <- "county17"
+  map$county[map$id=="MÃ¸re og Romsdal"] <- "county15"
+  map$county[map$id=="SÃ¸r-TrÃ¸ndelag"] <- "county16"
+  map$county[map$id=="Nord-TrÃ¸ndelag"] <- "county17"
   map$county[map$id=="Nordland"] <- "county18"
   map$county[map$id=="Troms"] <- "county19"
   map$county[map$id=="Finnmark"] <- "county20"
