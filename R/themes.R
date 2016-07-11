@@ -12,14 +12,13 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
     
     axis.line.x =        element_line(size=base_size/20),
     axis.line.y =        element_line(size=base_size/20),
-    axis.text.x =        element_text(vjust = 1),
-    axis.text.y =        element_text(hjust = 1),
+    axis.text.x =        element_text(vjust = 1, margin=margin(5,5,10,5,"pt")),
+    axis.text.y =        element_text(hjust = 1, margin=margin(5,5,10,5,"pt")),
     axis.ticks =         element_line(),
     axis.title =         element_text(colour = "black"),
     axis.title.x =       element_text(vjust = 1),
     axis.title.y =       element_text(angle = 90, vjust=1),
     axis.ticks.length =  unit(0.3, "lines"),
-    axis.ticks.margin =  unit(0.5, "lines"),
     
     legend.background =  element_rect(colour = NA),
     legend.margin =      unit(0.2, "cm"),
@@ -70,14 +69,13 @@ theme_SMAO45 <- function(base_size = 12, base_family = "") {
     
     axis.line.x =        element_line(size=base_size/20),
     axis.line.y =        element_line(size=base_size/20),
-    axis.text.x =        element_text(vjust = 1,angle=-45,hjust=0),
-    axis.text.y =        element_text(hjust = 1),
+    axis.text.x =        element_text(vjust = 1,angle=-45,hjust=0, margin=margin(5,5,10,5,"pt")),
+    axis.text.y =        element_text(hjust = 1, margin=margin(5,5,10,5,"pt")),
     axis.ticks =         element_line(colour = "black", size = 0.2),
     axis.title =         element_text(colour = "black"),
     axis.title.x =       element_text(vjust = 1),
     axis.title.y =       element_text(angle = 90),
     axis.ticks.length =  unit(0.3, "lines"),
-    axis.ticks.margin =  unit(0.5, "lines"),
     
     legend.background =  element_rect(colour = NA),
     legend.margin =      unit(0.2, "cm"),
