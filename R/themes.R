@@ -22,7 +22,7 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
     
     legend.background =  element_rect(colour = NA),
     legend.margin =      unit(0.2, "cm"),
-    legend.key =         element_rect(fill = "black", colour = "white"),
+    legend.key =         element_rect(fill = "white", colour = "black"),
     legend.key.size =    unit(0.1*base_size, "lines"),
     legend.key.height =  NULL,
     legend.key.width =   NULL,
@@ -79,7 +79,7 @@ theme_SMAO45 <- function(base_size = 12, base_family = "") {
     
     legend.background =  element_rect(colour = NA),
     legend.margin =      unit(0.2, "cm"),
-    legend.key =         element_rect(fill = "black", colour = "white"),
+    legend.key =         element_rect(fill = "white", colour = "black"),
     legend.key.size =    unit(1.2, "lines"),
     legend.key.height =  NULL,
     legend.key.width =   NULL,
