@@ -38,6 +38,7 @@ Imports:
   rgdal,
   rgeos,
   shiny,
-  flexdashboard
+  flexdashboard,
+  pomp
 License: GPL-3
 LazyData: true
