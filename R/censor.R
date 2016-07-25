@@ -11,6 +11,10 @@ Censor <- function(n,d=NULL,boundaries=NULL){
       index <- new >= boundaries[[i]] & n < boundaries[[i]]
       index[is.na(index)] <- FALSE
       new[index] <- boundaries[[i]][index] - 1
+      
+      index <- new < boundaries[[i]] & n >= boundaries[[i]]
+      index[is.na(index)] <- FALSE
+      new[index] <- boundaries[[i]][index] + 0.001
     }
   }
   n <- new
