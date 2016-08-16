@@ -1,10 +1,8 @@
 Censor <- function(n,randomNoise,d=NULL,boundaries=NULL){
   set.seed(4)
   
-  index <- n >= 3
-  index[is.na(index)] <- FALSE
   new <- n
-  new[index] <- new[index] + randomNoise
+  new <- new + randomNoise
   if(!is.null(boundaries)){
     if(!is.list(boundaries)) boundaries <- list(boundaries)
     for(i in 1:length(boundaries)){
