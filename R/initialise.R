@@ -17,11 +17,11 @@ Initialise <- function(){
   assign("isRStudio", Sys.getenv("RSTUDIO") == "1")
 
   if(!exists("RPROJ")){
-    assign("RPROJ", list(PROJHOME = normalizePath("/src/")), envir=globalenv())
+    assign("RPROJ", list(PROJHOME = file.path("/src/")), envir=globalenv())
   } 
 
   if(is.null(RPROJ$APPHOME)){
-    assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = normalizePath("../../app/sykdomspuls/")), envir=globalenv())
+    assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = file.path("../../app/sykdomspuls/")), envir=globalenv())
   }
 
   setwd(RPROJ$PROJHOME)
