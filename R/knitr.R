@@ -199,22 +199,28 @@ RmdToDOCX <- function (inFile = "", outFile = "", tocDepth = 2, copyFrom = NULL)
     inFile <- gsub(paste0("^", copyFrom, "/"), "", inFile)
   }
   try({
-    if (RAWmisc::PandocInstalled()) {
-      outFile <- unlist(stringr::str_split(outFile, "/"))
-      if (length(outFile) == 1) {
-        outDir <- getwd()
-      }
-      else {
-        outDir <- file.path(getwd(), outFile[-length(outFile)])
-        outFile <- outFile[length(outFile)]
-      }
-      css <- system.file("extdata", "custom.css", package = "RAWmisc")
-      rmarkdown::render(input = inFile, output_file = outFile, 
-                        output_dir = outDir, output_format = rmarkdown::word_document(toc = TRUE, 
-                                                                                      toc_depth = tocDepth))
+    outDir <- tempdir()
+    originalOutFile <- outFile
+    
+    outFile <- unlist(stringr::str_split(outFile, "/"))
+    if (length(outFile) == 1) {
+      #outDir <- getwd()
     }
     else {
+      #outDir <- file.path(getwd(), outFile[-length(outFile)])
+      outFile <- outFile[length(outFile)]
     }
+    
+    rmarkdown::render(input = inFile, output_file = outFile, 
+                      output_dir = outDir, output_format = rmarkdown::word_document(toc = TRUE, 
+                                                                                    toc_depth = tocDepth))
+  
+    cmd <- paste0("rm -f ",file.path(getwd(),originalOutFile))
+    system(cmd)
+    print(cmd)
+    cmd <- paste0("cp -f ",file.path(outDir,outFile)," ",file.path(getwd(),originalOutFile))
+    system(cmd)
+    print(cmd)
   }, TRUE)
   if (!is.null(copyFrom)) {
     file.remove(inFile)
