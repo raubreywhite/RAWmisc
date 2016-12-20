@@ -3,7 +3,9 @@ DashboardInitialiseClean <- function(){
         assign("RPROJ", list(PROJHOME = Sys.getenv("RPROJ")), envir = globalenv())
         setwd(RPROJ$PROJHOME)
   }
-  PROJNAME <- rev(stringr::str_split(RPROJ$PROJHOME,"/")[[1]])[1]
+   PROJNAME <- rev(stringr::str_split(RPROJ$PROJHOME,"/")[[1]])		
+   PROJNAME <- PROJNAME[PROJNAME!=""]		
+   PROJNAME <- PROJNAME[1]
   PROJSTUB <- gsub(paste0("cleaning/",PROJNAME),"",RPROJ$PROJHOME)
    assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, 
                         PROJNAME = PROJNAME,
