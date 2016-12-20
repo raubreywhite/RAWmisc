@@ -1,4 +1,4 @@
-InitialiseDashboardClean <- function(){
+DashboardInitialiseClean <- function(){
   if (Sys.getenv("RPROJ") != "") {
         assign("RPROJ", list(PROJHOME = Sys.getenv("RPROJ")), envir = globalenv())
         setwd(RPROJ$PROJHOME)
