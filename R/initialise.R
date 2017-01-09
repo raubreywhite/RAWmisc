@@ -30,3 +30,42 @@ Initialise <- function(){
   sapply(fileSources,source,.GlobalEnv)
  }
  
+InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKED=NULL,PROJFINAL=NULL,PROJSHARED=NULL){
+  PROJNAME <- rev(stringr::str_split(RPROJ$PROJHOME,"/")[[1]])		
+  PROJNAME <- PROJNAME[PROJNAME!=""]		
+  PROJNAME <- PROJNAME[1]
+  
+  if(Sys.getenv("PROJHOME")!=""){
+    PROJHOME = Sys.getenv("PROJHOME")
+  }
+  if(Sys.getenv("PROJRAW")!=""){
+    PROJRAW = Sys.getenv("PROJRAW")
+  }
+  if(Sys.getenv("PROJCLEAN")!=""){
+    PROJCLEAN = Sys.getenv("PROJCLEAN")
+  }
+  if(Sys.getenv("PROJBAKED")!=""){
+    PROJBAKED = Sys.getenv("PROJBAKED")
+  }
+  if(Sys.getenv("PROJFINAL")!=""){
+    PROJFINAL = Sys.getenv("PROJFINAL")
+  }
+  if(Sys.getenv("PROJSHARED")!=""){
+    PROJSHARED = Sys.getenv("PROJSHARED")
+  }
+
+  assign("RPROJ", list(
+    PROJHOME = PROJHOME, 
+    PROJRAW = PROJRAW,
+    PROJCLEAN = PROJCLEAN,
+    PROJBAKED = PROJBAKED,
+    PROJFINAL = PROJFINAL,
+    PROJSHARED = PROJSHARED
+  ), envir=globalenv())
+
+  setwd(RPROJ$PROJHOME)
+
+  fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
+  sapply(fileSources,source,.GlobalEnv)
+ }
+ 
