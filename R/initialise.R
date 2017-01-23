@@ -64,7 +64,7 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
   ), envir=globalenv())
   
   for(i in names(RPROJ)){
-    if(!dir.exists(RPROJ[[i]]) dir.create(RPROJ[[i]], recursive=TRUE)  
+    if(!dir.exists(RPROJ[[i]])) dir.create(RPROJ[[i]], recursive=TRUE)  
   }
 
   setwd(RPROJ$PROJHOME)
