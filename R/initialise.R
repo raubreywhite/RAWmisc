@@ -31,10 +31,6 @@ Initialise <- function(){
  }
  
 InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKED=NULL,PROJFINAL=NULL,PROJSHARED=NULL){
-  PROJNAME <- rev(stringr::str_split(RPROJ$PROJHOME,"/")[[1]])		
-  PROJNAME <- PROJNAME[PROJNAME!=""]		
-  PROJNAME <- PROJNAME[1]
-  
   if(Sys.getenv("PROJHOME")!=""){
     PROJHOME = Sys.getenv("PROJHOME")
   }
