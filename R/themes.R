@@ -1,4 +1,6 @@
-theme_SMAO <- function(base_size = 12, base_family = "") {
+
+
+theme_SMAO <- function(base_size = 24, base_family = "") {
   theme(
     line =               element_line(colour = "black", size = 0.5, linetype = 1,
                                       lineend = "butt"),
@@ -7,18 +9,18 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
                                       color = "black", size = base_size,
                                       hjust = 0.5, vjust = 0.5, angle = 0, lineheight = 0.9,
                                       margin = margin(), debug = FALSE),
-    axis.text =          element_text(size = rel(0.8), colour = "black"),
-    strip.text =         element_text(size = rel(0.8), colour = "black"),
+    axis.text =          element_text(size = rel(1), colour = "black", margin=margin(unit(c(2, 2, 2, 2), "lines"))),
+    strip.text =         element_text(size = rel(1), colour = "black"),
     
     axis.line.x =        element_line(size=base_size/20),
     axis.line.y =        element_line(size=base_size/20),
-    axis.text.x =        element_text(vjust = 1, margin=margin(5,5,10,5,"pt")),
-    axis.text.y =        element_text(hjust = 1, margin=margin(5,5,10,5,"pt")),
+    axis.text.x =        element_text(vjust = 1, margin=margin(0.01*base_size,0,0.05*base_size,0,"lines")),
+    axis.text.y =        element_text(hjust = 1, margin=margin(0,0.01*base_size,0,0.05*base_size,"lines")),
     axis.ticks =         element_line(),
     axis.title =         element_text(colour = "black"),
-    axis.title.x =       element_text(vjust = 1),
-    axis.title.y =       element_text(angle = 90, vjust=1),
-    axis.ticks.length =  unit(0.3, "lines"),
+    axis.title.x =       element_text(vjust = 0, margin=margin(5,5,10,5,"pt")),
+    axis.title.y =       element_text(angle = 90, vjust=0, margin=margin(5,5,10,5,"pt")),
+    axis.ticks.length =  unit(0.03*base_size, "lines"),
     
     legend.background =  element_rect(colour = NA),
     legend.margin =      unit(0.2, "cm"),
@@ -36,7 +38,7 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
     legend.box =         NULL,
     
     panel.background =   element_rect(fill = NA, colour = NA),
-    panel.border =       element_rect(fill = NA, colour = "black"),
+    panel.border =       element_rect(fill = NA, colour = NA),
     panel.grid.major =   element_line(colour = "black", size = rel(0.8), linetype=3),
     panel.grid.minor =   element_line(colour = "black", size = rel(0.8), linetype=3),
     panel.margin =       unit(0.25, "lines"),
@@ -46,8 +48,10 @@ theme_SMAO <- function(base_size = 12, base_family = "") {
     strip.text.y =       element_text(angle = -90),
     
     plot.background =    element_rect(colour = NA, fill = NA),
-    plot.title =         element_text(size = rel(1.2)),
+    plot.title =         element_text(size = rel(1.2), vjust=1, margin=margin(0,0,0.1*base_size,0,"lines")),
     plot.margin =        unit(c(2, 2, 2, 2), "lines"),
+    
+    panel.margin =        unit(c(2, 2, 2, 2), "lines"),
     
     complete = TRUE
   )
