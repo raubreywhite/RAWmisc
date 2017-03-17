@@ -33,7 +33,7 @@ DashboardEmail <- function(emailBCC,emailSubject,emailText){
     from("Dashboards FHI <dashboardsfhi@gmail.com>") %>%
     bcc(paste0(emails,collapse=",")) %>%
     subject(emailSubject) %>%
-    text_body(emailText) -> text_msg
+    html_body(emailText) -> text_msg
   
   currentWD <- getwd()
   tmp <- tempdir()
