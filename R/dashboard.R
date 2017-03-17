@@ -28,6 +28,15 @@ DashboardEmail <- function(emailBCC,emailSubject,emailText){
   emails <- readxl::read_excel("/etc/gmailr/emails.xlsx")
   emails <- na.omit(emails[[emailBCC]])
   
+  emailText <- paste0(emailText,
+    "<br><br><br>  
+    ------------------------
+    <br>
+    DO NOT REPLY TO THIS EMAIL! This email address is not checked by anyone!
+    <br>
+    To add or remove people to/from this notification list, send their details to richard.white@fhi.no
+    ")
+  
   mime() %>%
     to("dashboards@fhi.no") %>%
     from("Dashboards FHI <dashboardsfhi@gmail.com>") %>%
