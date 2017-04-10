@@ -30,24 +30,43 @@ Initialise <- function(){
   sapply(fileSources,source,.GlobalEnv)
  }
  
-InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKED=NULL,PROJFINAL=NULL,PROJSHARED=NULL){
+InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKED=NULL,PROJFINAL=NULL,PROJSHARED=NULL,HOME=NULL,RAW=NULL,CLEAN=NULL,BAKED=NULL,FINAL=NULL,SHARED=NULL){
   if(Sys.getenv("PROJHOME")!=""){
-    PROJHOME = Sys.getenv("PROJHOME")
+    HOME = PROJHOME = Sys.getenv("PROJHOME")
   }
   if(Sys.getenv("PROJRAW")!=""){
-    PROJRAW = Sys.getenv("PROJRAW")
+    RAW = PROJRAW = Sys.getenv("PROJRAW")
   }
   if(Sys.getenv("PROJCLEAN")!=""){
-    PROJCLEAN = Sys.getenv("PROJCLEAN")
+    CLEAN = PROJCLEAN = Sys.getenv("PROJCLEAN")
   }
   if(Sys.getenv("PROJBAKED")!=""){
-    PROJBAKED = Sys.getenv("PROJBAKED")
+    BAKED = PROJBAKED = Sys.getenv("PROJBAKED")
   }
   if(Sys.getenv("PROJFINAL")!=""){
-    PROJFINAL = Sys.getenv("PROJFINAL")
+    FINAL = PROJFINAL = Sys.getenv("PROJFINAL")
   }
   if(Sys.getenv("PROJSHARED")!=""){
-    PROJSHARED = Sys.getenv("PROJSHARED")
+    SHARED = PROJSHARED = Sys.getenv("PROJSHARED")
+  }
+  
+  if(is.null(PROJHOME) & !is.null(HOME)){
+    PROJHOME=HOME  
+  }
+  if(is.null(PROJRAW) & !is.null(RAW)){
+    PROJRAW=RAW  
+  }
+  if(is.null(PROJCLEAN) & !is.null(CLEAN)){
+    PROJCLEAN=CLEAN
+  }
+  if(is.null(PROJBAKED) & !is.null(BAKED)){
+    PROJBAKED=BAKED
+  }
+  if(is.null(PROJFINAL) & !is.null(FINAL)){
+    PROJFINAL=FINAL
+  }
+  if(is.null(PROJSHARED) & !is.null(SHARED)){
+    PROJSHARED=SHARED
   }
 
   assign("RPROJ", list(
@@ -56,14 +75,29 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
     PROJCLEAN = PROJCLEAN,
     PROJBAKED = PROJBAKED,
     PROJFINAL = PROJFINAL,
-    PROJSHARED = PROJSHARED
+    PROJSHARED = PROJSHARED,
+    HOME = HOME, 
+    RAW = RAW,
+    CLEAN = CLEAN,
+    BAKED = BAKED,
+    FINAL = FINAL,
+    SHARED = SHARED
   ), envir=globalenv())
   
-  for(i in names(RPROJ)){
-    if(!is.null(RPROJ[[i]])) if(!dir.exists(RPROJ[[i]])) dir.create(RPROJ[[i]], recursive=TRUE)  
+  assign("PROJ", list(
+    HOME = HOME, 
+    RAW = RAW,
+    CLEAN = CLEAN,
+    BAKED = BAKED,
+    FINAL = FINAL,
+    SHARED = SHARED
+  ), envir=globalenv())
+  
+  for(i in names(PROJ)){
+    if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)  
   }
 
-  setwd(RPROJ$PROJHOME)
+  setwd(PROJ$HOME)
 
   fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
   sapply(fileSources,source,.GlobalEnv)
