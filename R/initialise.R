@@ -51,22 +51,41 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
   }
   
   if(is.null(PROJHOME) & !is.null(HOME)){
-    PROJHOME=HOME  
+    PROJHOME <- HOME  
   }
   if(is.null(PROJRAW) & !is.null(RAW)){
-    PROJRAW=RAW  
+    PROJRAW <- RAW  
   }
   if(is.null(PROJCLEAN) & !is.null(CLEAN)){
-    PROJCLEAN=CLEAN
+    PROJCLEAN <- CLEAN
   }
   if(is.null(PROJBAKED) & !is.null(BAKED)){
-    PROJBAKED=BAKED
+    PROJBAKED <- BAKED
   }
   if(is.null(PROJFINAL) & !is.null(FINAL)){
-    PROJFINAL=FINAL
+    PROJFINAL <- FINAL
   }
   if(is.null(PROJSHARED) & !is.null(SHARED)){
-    PROJSHARED=SHARED
+    PROJSHARED <- SHARED
+  }
+  
+  if(!is.null(PROJHOME) & is.null(HOME)){
+    PROJHOME -> HOME  
+  }
+  if(!is.null(PROJRAW) & is.null(RAW)){
+    PROJRAW -> RAW  
+  }
+  if(!is.null(PROJCLEAN) & is.null(CLEAN)){
+    PROJCLEAN -> CLEAN
+  }
+  if(!is.null(PROJBAKED) & is.null(BAKED)){
+    PROJBAKED -> BAKED
+  }
+  if(!is.null(PROJFINAL) & is.null(FINAL)){
+    PROJFINAL -> FINAL
+  }
+  if(!is.null(PROJSHARED) & is.null(SHARED)){
+    PROJSHARED -> SHARED
   }
 
   assign("RPROJ", list(
