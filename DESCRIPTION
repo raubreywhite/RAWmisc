@@ -16,6 +16,8 @@ Imports:
   rgdal,
   rmarkdown,
   knitr,
-  stringr
+  stringr,
+  selectiveInference,
+  glmnet
 License: GPL-3
 LazyData: true
