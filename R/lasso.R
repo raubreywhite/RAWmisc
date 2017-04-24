@@ -1,5 +1,4 @@
-
-LassoWithPValues <- function(x, y, family="gaussian"){
+LassoWithPValues <- function(x, y, family="gaussian", alpha=0.05){
   x=scale(x,TRUE,FALSE)
   # first run glmnet
   gfit = glmnet::cv.glmnet(x,y,standardize=T, family=family)
@@ -10,6 +9,5 @@ LassoWithPValues <- function(x, y, family="gaussian"){
     beta = coef(gfit,se="lambda.1se",exact=TRUE)
   }
   
-  return(selectiveInference::fixedLassoInf(x,y,beta,gfit$lambda.1se*n,sigma=sigma,type="partial", family=family))
+  return(selectiveInference::fixedLassoInf(x,y,beta,gfit$lambda.1se*n,sigma=sigma,type="partial", family=family, alpha=alpha))
 }
-
