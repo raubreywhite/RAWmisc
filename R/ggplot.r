@@ -108,7 +108,7 @@ SMAOpng <- function (file = "Figure.png", w = 1, h = 1, landscape = TRUE)
 
 
 
-theme_SMAO <- function(base_size = 24, base_family = "") {
+theme_SMAO_V1 <- function(base_size = 24, base_family = "") {
   theme(
     line =               element_line(colour = "black", size = 0.5, linetype = 1,
                                       lineend = "butt"),
@@ -165,7 +165,36 @@ theme_SMAO <- function(base_size = 24, base_family = "") {
   )
 }
 
-attr(theme_SMAO(), "complete")
+theme_SMAO_V2 <- function(base_size=24, base_family=""){
+  half_line <- base_size / 2
+  theme_gray(base_size) + 
+  theme(
+    # Elements in this first block aren't used directly, but are inherited
+    # by others
+    axis.line =          element_line(size=base_size/20),
+    axis.line.x =        NULL,
+    axis.line.y =        NULL,
+    axis.text =          element_text(size = rel(1), colour = "black", margin=margin(unit(c(2, 2, 2, 2), "lines"))),
+    axis.text.x =        element_text(vjust = 1, margin=margin(0.01*base_size,0,0.05*base_size,0,"lines")),
+    axis.text.x.top =    element_text(vjust = 1, margin=margin(0.01*base_size,0,0.05*base_size,0,"lines")),
+    axis.text.y =        element_text(hjust = 1, margin=margin(0,0.01*base_size,0,0.05*base_size,"lines")),
+    axis.text.y.right =  element_text(hjust = 1, margin=margin(0,0.01*base_size,0,0.05*base_size,"lines")),
+    axis.ticks =         element_line(),
+    axis.ticks.length =  unit(0.03*base_size, "lines"),
+    
+    legend.key =         element_rect(fill = "white", colour = "black"),
+    legend.key.size =    unit(0.1*base_size, "lines"),
+
+    panel.background =   element_rect(fill = NA, colour = NA),
+    panel.grid.major =   element_line(colour = "black", size = rel(0.8), linetype=3),
+    panel.grid.minor =   element_line(colour = "black", size = rel(0.4), linetype=3),
+
+    strip.background =   element_rect(fill = NA, colour = NA),
+    strip.text =         element_text(),
+    complete = TRUE
+  )
+  
+}
 
 theme_SMAO45 <- function(base_size = 12, base_family = "") {
   theme(
@@ -222,8 +251,12 @@ theme_SMAO45 <- function(base_size = 12, base_family = "") {
   )
 }
 
-attr(theme_SMAO45(), "complete")
-
-
+theme_SMAO <- function(base_size = 24, base_family = "", v=1) {
+  if(v==1){
+   return(theme_SMAO_V1(base_size=base_size, base_family=base_family)) 
+  } else if(v==2){
+   return(theme_SMAO_V2(base_size=base_size, base_family=base_family)) 
+  }
+}
 
 
