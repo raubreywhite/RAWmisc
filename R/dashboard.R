@@ -6,7 +6,7 @@ DashboardInitialiseClean <- function(){
   if (Sys.getenv("INSIDE_HOME") != "") {
     INSIDE_HOME <- Sys.getenv("INSIDE_HOME")
   } else {
-    INSIDE_HOME <- "cleaning"
+    INSIDE_HOME <- rev(stringr::str_split(getwd(),"/")[[1]])[2]
   }
 
   if (Sys.getenv("NAME") != "") {
