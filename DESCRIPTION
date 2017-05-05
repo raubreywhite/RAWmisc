@@ -6,16 +6,10 @@ Description: Convenience functions
 Depends:
   R (>= 3.1.0)
 Imports:
-  data.table,
   ggplot2,
-  gridExtra,
   grid,
-  scales,
   maptools,
-  rgeos,
-  rgdal,
   rmarkdown,
-  knitr,
   stringr,
   readxl,
   gmailr,
