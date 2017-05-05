@@ -3,6 +3,7 @@
 export(Censor)
 export(DashboardEmail)
 export(DashboardFolder)
+export(DashboardInitialiseClean)
 export(FortifyShapeFile)
 export(FortifyShapeFileNorwegianCounties)
 export(FortifyShapeFileNorwegianMunicipalities)

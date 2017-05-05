@@ -1,6 +1,7 @@
 #' If folders are setup according to the
 #' dashboard philosophy, then this function
 #' sets RPROJ
+#' @export DashboardInitialiseClean
 DashboardInitialiseClean <- function(){
   if (Sys.getenv("INSIDE_HOME") != "") {
     INSIDE_HOME <- Sys.getenv("INSIDE_HOME")
