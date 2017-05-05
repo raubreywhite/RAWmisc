@@ -128,14 +128,12 @@ InitialiseProject <- function(PROJHOME=NULL,
   )
 
   PROJ <- new.env(parent = emptyenv())
-  PROJ <- list(
-    HOME = HOME,
-    RAW = RAW,
-    CLEAN = CLEAN,
-    BAKED = BAKED,
-    FINAL = FINAL,
-    SHARED = SHARED
-  )
+  PROJ$HOME <- HOME
+  PROJ$RAW <- RAW
+  PROJ$CLEAN <- CLEAN
+  PROJ$BAKED <- BAKED
+  PROJ$FINAL <- FINAL
+  PROJ$SHARED <- SHARED
 
   for(i in names(PROJ)){
     if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
