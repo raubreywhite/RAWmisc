@@ -14,7 +14,8 @@ Imports:
   readxl,
   gmailr,
   broom,
-  magrittr
+  magrittr,
+  lubridate
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1

@@ -111,29 +111,26 @@ InitialiseProject <- function(PROJHOME=NULL,
     PROJSHARED -> SHARED
   }
 
-  RPROJ <- new.env(parent = emptyenv())
-  RPROJ <- list(
-    PROJHOME = PROJHOME,
-    PROJRAW = PROJRAW,
-    PROJCLEAN = PROJCLEAN,
-    PROJBAKED = PROJBAKED,
-    PROJFINAL = PROJFINAL,
-    PROJSHARED = PROJSHARED,
-    HOME = HOME,
-    RAW = RAW,
-    CLEAN = CLEAN,
-    BAKED = BAKED,
-    FINAL = FINAL,
-    SHARED = SHARED
-  )
+  RPROJ$PROJHOME = PROJHOME
+  RPROJ$PROJRAW = PROJRAW
+  RPROJ$PROJCLEAN = PROJCLEAN
+  RPROJ$PROJBAKED = PROJBAKED
+  RPROJ$PROJFINAL = PROJFINAL
+  RPROJ$PROJSHARED = PROJSHARED
+  RPROJ$HOME = HOME
+  RPROJ$RAW = RAW
+  RPROJ$CLEAN = CLEAN
+  RPROJ$BAKED = BAKED
+  RPROJ$FINAL = FINAL
+  RPROJ$SHARED = SHARED
 
-  PROJ <- new.env(parent = emptyenv())
   PROJ$HOME <- HOME
   PROJ$RAW <- RAW
   PROJ$CLEAN <- CLEAN
   PROJ$BAKED <- BAKED
   PROJ$FINAL <- FINAL
   PROJ$SHARED <- SHARED
+  PROJ$SHARED_TODAY <- file.path(SHARED,lubridate::today())
 
   for(i in names(PROJ)){
     if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
