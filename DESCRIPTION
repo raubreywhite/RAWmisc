@@ -1,6 +1,6 @@
 Package: RAWmisc
 Title: R Convenience functions
-Version: 1.0.6
+Version: 1.0.7
 Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
 Description: Convenience functions
 Depends:
@@ -17,7 +17,10 @@ Imports:
   rmarkdown,
   knitr,
   stringr,
-  selectiveInference,
-  glmnet
+  readxl,
+  gmailr,
+  broom,
+  magrittr
 License: GPL-3
 LazyData: true
+RoxygenNote: 6.0.1

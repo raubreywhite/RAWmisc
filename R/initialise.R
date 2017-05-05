@@ -1,9 +1,7 @@
-
-msg <- function(p,s,m){
-  if(!s %in% c("RUN","ERROR","WARN","FINISHED")) stop("Error in message function")
-  if(length(grep("linux",sessionInfo()$platform))>0) system(paste0('/log/log.sh "',lubridate::now(tzone="CET"),'@',p,'@',s,'@',m,'"'))
-}
-
+#' If folders are setup according to the
+#' dashboard philosophy, then this function
+#' sets RPROJ
+#' @export Initialise
 Initialise <- function(){
   if(Sys.getenv("RPROJ")!=""){
     assign("RPROJ", list(PROJHOME = Sys.getenv("RPROJ")), envir=globalenv())
@@ -13,12 +11,12 @@ Initialise <- function(){
     assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = Sys.getenv("RAPP")), envir=globalenv())
   }
 
-  assign("isLinux", length(grep("linux",sessionInfo()$platform))>0)
+  assign("isLinux", length(grep("linux",utils::sessionInfo()$platform))>0)
   assign("isRStudio", Sys.getenv("RSTUDIO") == "1")
 
   if(!exists("RPROJ")){
     assign("RPROJ", list(PROJHOME = file.path("/src/")), envir=globalenv())
-  } 
+  }
 
   if(is.null(RPROJ$APPHOME)){
     assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = file.path("../../app/sykdomspuls/")), envir=globalenv())
@@ -29,8 +27,33 @@ Initialise <- function(){
   fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
   sapply(fileSources,source,.GlobalEnv)
  }
- 
-InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKED=NULL,PROJFINAL=NULL,PROJSHARED=NULL,HOME=NULL,RAW=NULL,CLEAN=NULL,BAKED=NULL,FINAL=NULL,SHARED=NULL){
+
+#' Initialises project
+#' @param PROJHOME a
+#' @param PROJRAW a
+#' @param PROJCLEAN a
+#' @param PROJBAKED a
+#' @param PROJFINAL a
+#' @param PROJSHARED a
+#' @param HOME a
+#' @param RAW a
+#' @param CLEAN a
+#' @param BAKED a
+#' @param FINAL a
+#' @param SHARED a
+#' @export InitialiseProject
+InitialiseProject <- function(PROJHOME=NULL,
+                              PROJRAW=NULL,
+                              PROJCLEAN=NULL,
+                              PROJBAKED=NULL,
+                              PROJFINAL=NULL,
+                              PROJSHARED=NULL,
+                              HOME=NULL,
+                              RAW=NULL,
+                              CLEAN=NULL,
+                              BAKED=NULL,
+                              FINAL=NULL,
+                              SHARED=NULL){
   if(Sys.getenv("PROJHOME")!=""){
     HOME = PROJHOME = Sys.getenv("PROJHOME")
   }
@@ -49,12 +72,12 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
   if(Sys.getenv("PROJSHARED")!=""){
     SHARED = PROJSHARED = Sys.getenv("PROJSHARED")
   }
-  
+
   if(is.null(PROJHOME) & !is.null(HOME)){
-    PROJHOME <- HOME  
+    PROJHOME <- HOME
   }
   if(is.null(PROJRAW) & !is.null(RAW)){
-    PROJRAW <- RAW  
+    PROJRAW <- RAW
   }
   if(is.null(PROJCLEAN) & !is.null(CLEAN)){
     PROJCLEAN <- CLEAN
@@ -68,12 +91,12 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
   if(is.null(PROJSHARED) & !is.null(SHARED)){
     PROJSHARED <- SHARED
   }
-  
+
   if(!is.null(PROJHOME) & is.null(HOME)){
-    PROJHOME -> HOME  
+    PROJHOME -> HOME
   }
   if(!is.null(PROJRAW) & is.null(RAW)){
-    PROJRAW -> RAW  
+    PROJRAW -> RAW
   }
   if(!is.null(PROJCLEAN) & is.null(CLEAN)){
     PROJCLEAN -> CLEAN
@@ -88,32 +111,34 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
     PROJSHARED -> SHARED
   }
 
-  assign("RPROJ", list(
-    PROJHOME = PROJHOME, 
+  RPROJ <- new.env(parent = emptyenv())
+  RPROJ <- list(
+    PROJHOME = PROJHOME,
     PROJRAW = PROJRAW,
     PROJCLEAN = PROJCLEAN,
     PROJBAKED = PROJBAKED,
     PROJFINAL = PROJFINAL,
     PROJSHARED = PROJSHARED,
-    HOME = HOME, 
+    HOME = HOME,
     RAW = RAW,
     CLEAN = CLEAN,
     BAKED = BAKED,
     FINAL = FINAL,
     SHARED = SHARED
-  ), envir=globalenv())
-  
-  assign("PROJ", list(
-    HOME = HOME, 
+  )
+
+  PROJ <- new.env(parent = emptyenv())
+  PROJ <- list(
+    HOME = HOME,
     RAW = RAW,
     CLEAN = CLEAN,
     BAKED = BAKED,
     FINAL = FINAL,
     SHARED = SHARED
-  ), envir=globalenv())
-  
+  )
+
   for(i in names(PROJ)){
-    if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)  
+    if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
   }
 
   setwd(PROJ$HOME)
@@ -121,4 +146,4 @@ InitialiseProject <- function(PROJHOME=NULL,PROJRAW=NULL,PROJCLEAN=NULL,PROJBAKE
   fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
   sapply(fileSources,source,.GlobalEnv)
  }
- 
+
