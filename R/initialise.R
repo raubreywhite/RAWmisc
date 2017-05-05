@@ -1,33 +1,3 @@
-#' If folders are setup according to the
-#' dashboard philosophy, then this function
-#' sets RPROJ
-#' @export Initialise
-Initialise <- function(){
-  if(Sys.getenv("RPROJ")!=""){
-    assign("RPROJ", list(PROJHOME = Sys.getenv("RPROJ")), envir=globalenv())
-    setwd(RPROJ$PROJHOME)
-  }
-  if(Sys.getenv("RAPP")!=""){
-    assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = Sys.getenv("RAPP")), envir=globalenv())
-  }
-
-  assign("isLinux", length(grep("linux",utils::sessionInfo()$platform))>0)
-  assign("isRStudio", Sys.getenv("RSTUDIO") == "1")
-
-  if(!exists("RPROJ")){
-    assign("RPROJ", list(PROJHOME = file.path("/src/")), envir=globalenv())
-  }
-
-  if(is.null(RPROJ$APPHOME)){
-    assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME, APPHOME = file.path("../../app/sykdomspuls/")), envir=globalenv())
-  }
-
-  setwd(RPROJ$PROJHOME)
-
-  fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
-  sapply(fileSources,source,.GlobalEnv)
- }
-
 #' Initialises project
 #' @param PROJHOME a
 #' @param PROJRAW a
@@ -131,6 +101,14 @@ InitialiseProject <- function(PROJHOME=NULL,
   PROJ$FINAL <- FINAL
   PROJ$SHARED <- SHARED
   PROJ$SHARED_TODAY <- file.path(SHARED,lubridate::today())
+
+  # Delete empty folders in shared folder
+  for(f in list.files(PROJ$SHARED)){
+    f2 <- file.path(PROJ$SHARED,f)
+    if(length(list.files(f2))==0){
+      unlink(f2, recursive = T)
+    }
+  }
 
   for(i in names(PROJ)){
     if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)

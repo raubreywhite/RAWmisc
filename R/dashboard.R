@@ -2,18 +2,29 @@
 #' dashboard philosophy, then this function
 #' sets RPROJ
 DashboardInitialiseClean <- function(){
-  if (Sys.getenv("RPROJ") != "") {
-        assign("RPROJ", list(PROJHOME = Sys.getenv("RPROJ")), envir = globalenv())
-        setwd(RPROJ$PROJHOME)
+  if (Sys.getenv("INSIDE_HOME") != "") {
+    INSIDE_HOME <- Sys.getenv("INSIDE_HOME")
+  } else {
+    INSIDE_HOME <- "cleaning"
   }
-   PROJNAME <- rev(stringr::str_split(RPROJ$PROJHOME,"/")[[1]])
-   PROJNAME <- PROJNAME[PROJNAME!=""]
-   PROJNAME <- PROJNAME[1]
-  PROJSTUB <- gsub(paste0("cleaning/",PROJNAME),"",RPROJ$PROJHOME)
-   assign("RPROJ", list(PROJHOME = RPROJ$PROJHOME,
-                        PROJNAME = PROJNAME,
-                        PROJSTUB = PROJSTUB),
-            envir = globalenv())
+
+  if (Sys.getenv("NAME") != "") {
+    NAME <- Sys.getenv("NAME")
+  } else {
+    NAME <- rev(stringr::str_split(getwd(),"/")[[1]])[1]
+  }
+
+  if (Sys.getenv("STUB") != "") {
+    STUB <- Sys.getenv("STUB")
+  } else {
+    STUB <- stringr::str_replace(getwd(),file.path(INSIDE_HOME,NAME),"")
+  }
+
+  PROJ$NAME <- NAME
+  PROJ$STUB <- STUB
+  PROJ$INSIDE_HOME <- INSIDE_HOME
+
+  setwd(file.path(PROJ$STUB,PROJ$INSIDE_HOME,PROJ$NAME))
 
    fileSources = file.path("code", list.files("code", pattern = "*.[rR]$"))
     sapply(fileSources, source, .GlobalEnv)
@@ -26,7 +37,7 @@ DashboardInitialiseClean <- function(){
 #' @param f an optional file
 #' @export DashboardFolder
 DashboardFolder <- function(inside="data_raw",f=NULL){
-  retVal <- file.path(RPROJ$PROJSTUB,inside,RPROJ$PROJNAME)
+  retVal <- file.path(PROJ$STUB,inside,PROJ$NAME)
   retVal <- paste0(retVal,"/")
   if(!is.null(f)){
     retVal <- file.path(retVal,f)
