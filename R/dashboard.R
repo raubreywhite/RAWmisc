@@ -57,8 +57,8 @@ DashboardFolder <- function(inside="data_raw",f=NULL){
 DashboardEmail <- function(emailBCC,
                            emailSubject,
                            emailText,
-                           XLSXLocation=file.path("etc","gmailr","emails.xlsx"),
-                           OAUTHLocation=file.path("etc","gmailr",".httr-oauth")){
+                           XLSXLocation=file.path("/etc","gmailr","emails.xlsx"),
+                           OAUTHLocation=file.path("/etc","gmailr",".httr-oauth")){
   emails <- readxl::read_excel(XLSXLocation)
   emails <- stats::na.omit(emails[[emailBCC]])
 
