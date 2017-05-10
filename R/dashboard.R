@@ -98,7 +98,7 @@ DashboardEmailSpecific <- function(emailBCC,
                            emailSubject,
                            emailText,
                            OAUTHLocation=file.path("/etc","gmailr",".httr-oauth")){
-  if(length(emails)>1) emails <- paste0(emails,collapse=",")
+  if(length(emailBCC)>1) emailBCC <- paste0(emailBCC,collapse=",")
 
   emailText <- paste0(emailText,
                       "<br><br><br>
@@ -112,7 +112,7 @@ DashboardEmailSpecific <- function(emailBCC,
   gmailr::mime() %>%
     gmailr::to("dashboards@fhi.no") %>%
     gmailr::from("Dashboards FHI <dashboardsfhi@gmail.com>") %>%
-    gmailr::bcc(emails) %>%
+    gmailr::bcc(emailBCC) %>%
     gmailr::subject(emailSubject) %>%
     gmailr::html_body(emailText) -> text_msg
 
