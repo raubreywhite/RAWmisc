@@ -2,6 +2,7 @@
 
 export(Censor)
 export(DashboardEmail)
+export(DashboardEmailSpecific)
 export(DashboardFolder)
 export(DashboardInitialiseClean)
 export(FortifyShapeFile)

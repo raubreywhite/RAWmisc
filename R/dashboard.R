@@ -87,3 +87,41 @@ DashboardEmail <- function(emailBCC,
   setwd(currentWD)
 }
 
+#' Sends out mass emails that are stored in an xlsx file
+#' @param emailBCC a
+#' @param emailSubject a
+#' @param emailText a
+#' @param OAUTHLocation a
+#' @importFrom magrittr %>%
+#' @export DashboardEmailSpecific
+DashboardEmailSpecific <- function(emailBCC,
+                           emailSubject,
+                           emailText,
+                           OAUTHLocation=file.path("/etc","gmailr",".httr-oauth")){
+  if(length(emails)>1) emails <- paste0(emails,collapse=",")
+
+  emailText <- paste0(emailText,
+                      "<br><br><br>
+    ------------------------
+    <br>
+    DO NOT REPLY TO THIS EMAIL! This email address is not checked by anyone!
+    <br>
+    To add or remove people to/from this notification list, send their details to richard.white@fhi.no
+    ")
+
+  gmailr::mime() %>%
+    gmailr::to("dashboards@fhi.no") %>%
+    gmailr::from("Dashboards FHI <dashboardsfhi@gmail.com>") %>%
+    gmailr::bcc(emails) %>%
+    gmailr::subject(emailSubject) %>%
+    gmailr::html_body(emailText) -> text_msg
+
+  currentWD <- getwd()
+  tmp <- tempdir()
+  file.copy(OAUTHLocation,paste0(tmp,"/.httr-oauth"))
+  setwd(tmp)
+  gmailr::gmail_auth()
+  gmailr::send_message(text_msg)
+  setwd(currentWD)
+}
+
