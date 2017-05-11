@@ -15,7 +15,8 @@ Imports:
   gmailr,
   broom,
   magrittr,
-  lubridate
+  lubridate,
+  data.table
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1
