@@ -165,6 +165,25 @@ theme_SMAO_V2 <- function(base_size=24, base_family=""){
 
 }
 
+#' Internal version 2 of a minimalist ggplot theme
+#' @param base_size base size
+#' @param base_family text family
+#' @import ggplot2
+#' @export theme_SMAO_V3
+theme_SMAO_V3 <- function(base_size=24, base_family=""){
+  half_line <- base_size / 2
+  theme_gray(base_size) +
+    theme(
+      # Elements in this first block aren't used directly, but are inherited
+      # by others
+      legend.key.size =    unit(0.11*base_size, "lines"),
+      panel.grid.major =   element_line(colour = "white", size = base_size*0.045),
+      panel.grid.minor =   element_line(colour = "white", size = half_line*0.045)
+    )
+  
+}
+
+
 #' Internal version 1 of a minimalist ggplot theme
 #' @param base_size base size
 #' @param base_family text family
