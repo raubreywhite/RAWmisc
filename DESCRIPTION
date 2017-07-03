@@ -2,7 +2,7 @@ Package: RAWmisc
 Title: R Convenience functions
 Version: 1.0.7
 Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
-Description: Convenience functions
+Description: Convenience functions for a variety of purposes.
 Depends:
   R (>= 3.1.0)
 Imports:
@@ -16,7 +16,8 @@ Imports:
   broom,
   magrittr,
   lubridate,
-  data.table
+  data.table,
+  utils
 Suggests: testthat
 License: GPL-3
 LazyData: true

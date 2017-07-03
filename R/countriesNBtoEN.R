@@ -1,5 +1,13 @@
+#' This function returns a named vector.
+#' The names are Norwegian country names and the
+#' values are English country names.
 #' @export CountriesNBtoEN
 CountriesNBtoEN <- function(){
+  faroeIslands <- paste0("F",NORCHAR$ae,"r",NORCHAR$OE,"yene")
+  austria <- paste0(NORCHAR$OE,"sterrike")
+  southAfrica <- paste0("S",NORCHAR$oe,"r-Afrika")
+  southKorea <- paste0("S",NORCHAR$oe,"r-Korea")
+
   c(
     "Afghanistan"="Afghanistan",
     "Albania"="Albania",
@@ -36,7 +44,7 @@ CountriesNBtoEN <- function(){
     "Eritrea"="Eritrea",
     "Estland"="Estonia",
     "Etiopia"="Ethiopia",
-    "Færøyene"="Faroe Islands",
+    faroeIslands="Faroe Islands",
     "Filippinene"="Philippines",
     "Finland"="Finland",
     "Forente Arabiske Emirater"="UAE",
@@ -103,7 +111,7 @@ CountriesNBtoEN <- function(){
     "Nord-Korea"="DPRK",
     "Norge"="Norway",
     "Oman"="Oman",
-    "Østerrike"="Austria",
+    austria="Austria",
     "Pakistan"="Pakistan",
     "Palestina"="Palestine",
     "Papua Ny-Guinea"="PNG",
@@ -119,8 +127,8 @@ CountriesNBtoEN <- function(){
     "Serbia"="Serbia",
     "Sierra Leone"="Sierra Leone",
     "Somalia"="Somalia",
-    "Sør-Afrika"="South Africa",
-    "Sør-Korea"="South Korea",
+    southAfrica="South Africa",
+    southKorea="South Korea",
     "Spania"="Spain",
     "Sri Lanka"="Sri Lanka",
     "Storbritannia"="UK",

@@ -19,18 +19,6 @@ InitialiseProject(HOME = NULL, RAW = NULL, CLEAN = NULL, BAKED = NULL,
 \item{FINAL}{a}
 
 \item{SHARED}{a}
-
-\item{PROJHOME}{a}
-
-\item{PROJRAW}{a}
-
-\item{PROJCLEAN}{a}
-
-\item{PROJBAKED}{a}
-
-\item{PROJFINAL}{a}
-
-\item{PROJSHARED}{a}
 }
 \description{
 Initialises project

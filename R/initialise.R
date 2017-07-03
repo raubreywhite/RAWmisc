@@ -6,12 +6,6 @@ AllowFileManipulationFromInitialiseProject <- function(){
 }
 
 #' Initialises project
-#' @param PROJHOME a
-#' @param PROJRAW a
-#' @param PROJCLEAN a
-#' @param PROJBAKED a
-#' @param PROJFINAL a
-#' @param PROJSHARED a
 #' @param HOME a
 #' @param RAW a
 #' @param CLEAN a
