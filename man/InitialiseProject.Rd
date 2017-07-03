@@ -4,23 +4,10 @@
 \alias{InitialiseProject}
 \title{Initialises project}
 \usage{
-InitialiseProject(PROJHOME = NULL, PROJRAW = NULL, PROJCLEAN = NULL,
-  PROJBAKED = NULL, PROJFINAL = NULL, PROJSHARED = NULL, HOME = NULL,
-  RAW = NULL, CLEAN = NULL, BAKED = NULL, FINAL = NULL, SHARED = NULL)
+InitialiseProject(HOME = NULL, RAW = NULL, CLEAN = NULL, BAKED = NULL,
+  FINAL = NULL, SHARED = NULL)
 }
 \arguments{
-\item{PROJHOME}{a}
-
-\item{PROJRAW}{a}
-
-\item{PROJCLEAN}{a}
-
-\item{PROJBAKED}{a}
-
-\item{PROJFINAL}{a}
-
-\item{PROJSHARED}{a}
-
 \item{HOME}{a}
 
 \item{RAW}{a}
@@ -32,6 +19,18 @@ InitialiseProject(PROJHOME = NULL, PROJRAW = NULL, PROJCLEAN = NULL,
 \item{FINAL}{a}
 
 \item{SHARED}{a}
+
+\item{PROJHOME}{a}
+
+\item{PROJRAW}{a}
+
+\item{PROJCLEAN}{a}
+
+\item{PROJBAKED}{a}
+
+\item{PROJFINAL}{a}
+
+\item{PROJSHARED}{a}
 }
 \description{
 Initialises project

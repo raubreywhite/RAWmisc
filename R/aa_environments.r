@@ -1,3 +1,4 @@
-#' @export PROJ RPROJ
+#' @export PROJ
 PROJ <- new.env(parent = emptyenv())
-RPROJ <- new.env(parent = emptyenv())
+PROJ$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- FALSE
+
