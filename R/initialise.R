@@ -2,7 +2,7 @@
 #' on your system
 #' @export AllowFileManipulationFromInitialiseProject
 AllowFileManipulationFromInitialiseProject <- function(){
-  PROJ$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- TRUE
+  CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- TRUE
 }
 
 #' Initialises project
@@ -30,18 +30,20 @@ InitialiseProject <- function(HOME=NULL,
     PROJ$SHARED_TODAY <- NULL
   } else {
     PROJ$SHARED_TODAY <- file.path(SHARED,lubridate::today())
+  }
+
+  if(CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT){
+    for(i in names(PROJ)){
+      if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
+    }
 
     # Delete empty folders in shared folder
-    if(PROJ$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT) for(f in list.files(PROJ$SHARED)){
+    if(!is.null(PROJ$SHARED)) for(f in list.files(PROJ$SHARED)){
       f2 <- file.path(PROJ$SHARED,f)
       if(length(list.files(f2))==0){
         unlink(f2, recursive = T)
       }
     }
-  }
-
-  if(PROJ$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT) for(i in names(PROJ)){
-    if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
   }
 
   setwd(PROJ$HOME)

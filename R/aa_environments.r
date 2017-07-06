@@ -1,7 +1,11 @@
 #' PROJ
 #' @export PROJ
 PROJ <- new.env(parent = emptyenv())
-PROJ$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- FALSE
+
+#' CONFIG
+#' @export CONFIG
+CONFIG <- new.env(parent = emptyenv())
+CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- FALSE
 
 #' BLAH
 #' @export NORCHAR
