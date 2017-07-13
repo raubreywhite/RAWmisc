@@ -9,7 +9,7 @@ ProgressBarCreate <- function(min = 0, max = 1, flush=TRUE)
   pb$min <- min
   pb$max <- max
   pb$timeStart <- Sys.time()
-  tb$flush <- flush
+  pb$flush <- flush
   class(pb) <- "RAWmiscProgressBar"
   return(pb)
 }
@@ -28,11 +28,12 @@ ProgressBarSet <- function(pb, value){
   timeTotal <- timeTaken/propCompleted
   timeLeft <- timeTotal-timeTaken
 
-  retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min. %s min remaining.",
+  retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min at %s. %s min remaining.",
               format(Sys.time(),'%H:%M:%S'),
               Format(timeTotal,digits=1),
               Format(propCompleted*100,digits=0),
               Format(timeTaken,digits=1),
+              format(Sys.time()+lubridate::minutes(timeLeft),'%H:%M:%S'),
               Format(timeLeft,digits=1)
               )
   if(pb$flush){
