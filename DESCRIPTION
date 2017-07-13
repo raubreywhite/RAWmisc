@@ -17,7 +17,8 @@ Imports:
   magrittr,
   lubridate,
   data.table,
-  utils
+  utils,
+  lubridate
 Suggests: testthat
 License: GPL-3
 LazyData: true
