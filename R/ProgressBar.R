@@ -25,7 +25,11 @@ ProgressBarSet <- function(pb, value){
 
   timeTaken <- as.numeric(difftime(Sys.time(),pb$timeStart, units = "mins"))
   propCompleted <- (value-pb$min)/(pb$max-pb$min)
-  timeTotal <- timeTaken/propCompleted
+  if(propCompleted==0){
+    timeTotal <- 1000
+  } else {
+    timeTotal <- timeTaken/propCompleted
+  }
   timeLeft <- timeTotal-timeTaken
 
   retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min at %s. %s min remaining.",
