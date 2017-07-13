@@ -1,13 +1,15 @@
 #' Creates a progress bar
 #' @param min Minimum
 #' @param max Maximum
+#' @param flush Should it flush or print the output?
 #' @export ProgressBarCreate
-ProgressBarCreate <- function(min = 0, max = 1)
+ProgressBarCreate <- function(min = 0, max = 1, flush=TRUE)
 {
   pb <- list()
   pb$min <- min
   pb$max <- max
   pb$timeStart <- Sys.time()
+  tb$flush <- flush
   class(pb) <- "RAWmiscProgressBar"
   return(pb)
 }
@@ -26,12 +28,15 @@ ProgressBarSet <- function(pb, value){
   timeTotal <- timeTaken/propCompleted
   timeLeft <- timeTotal-timeTaken
 
-  cat(sprintf("\r%s Total time: %s min. %s%% completed in %s min. %s min remaining.",
+  retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min. %s min remaining.",
               format(Sys.time(),'%H:%M:%S'),
               Format(timeTotal,digits=1),
               Format(propCompleted*100,digits=0),
               Format(timeTaken,digits=1),
               Format(timeLeft,digits=1)
-              ))
-  utils::flush.console()
+              )
+  if(pb$flush){
+    cat(retval)
+    utils::flush.console()
+  } else print(retval)
 }

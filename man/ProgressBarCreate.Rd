@@ -4,12 +4,14 @@
 \alias{ProgressBarCreate}
 \title{Creates a progress bar}
 \usage{
-ProgressBarCreate(min = 0, max = 1)
+ProgressBarCreate(min = 0, max = 1, flush = TRUE)
 }
 \arguments{
 \item{min}{Minimum}
 
 \item{max}{Maximum}
+
+\item{flush}{Should it flush or print the output?}
 }
 \description{
 Creates a progress bar
