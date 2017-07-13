@@ -9,8 +9,7 @@ ProgressBarSet(pb, value)
 \arguments{
 \item{pb}{A progress bar}
 
-\item{value}{The value
-#' @importFrom utils flush.console}
+\item{value}{The value}
 }
 \description{
 Sets progress bar's progress
