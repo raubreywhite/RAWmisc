@@ -38,7 +38,7 @@ ProgressBarSet <- function(pb, value){
               Format(timeTotal,digits=1),
               Format(propCompleted*100,digits=0),
               Format(timeTaken,digits=1),
-              format(lubridate::now()+lubridate::minutes(round(timeLeft)),'%H:%M:%S'),
+              "hi",
               Format(timeLeft,digits=1)
               )
   if(pb$flush){
