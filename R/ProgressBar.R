@@ -33,14 +33,15 @@ ProgressBarSet <- function(pb, value){
   }
   timeLeft <- timeTotal-timeTaken
 
-  retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min at %s. %s min remaining.",
-              format(Sys.time(),'%H:%M:%S'),
-              Format(timeTotal,digits=1),
-              Format(propCompleted*100,digits=0),
-              Format(timeTaken,digits=1),
-              "hi",
-              Format(timeLeft,digits=1)
-              )
+  #retval <- sprintf("\r%s Total time: %s min. %s%% completed in %s min at %s. %s min remaining.",
+  #            format(Sys.time(),'%H:%M:%S'),
+  #            Format(timeTotal,digits=1),
+  #            Format(propCompleted*100,digits=0),
+  #            Format(timeTaken,digits=1),
+  #            "hi",
+  #            Format(timeLeft,digits=1)
+  #            )
+  retval <- "ok"
   if(pb$flush){
     cat(retval)
     utils::flush.console()
