@@ -18,6 +18,7 @@ ProgressBarCreate <- function(min = 0, max = 1, flush=TRUE)
 #' @param pb A progress bar
 #' @param value The value
 #' @importFrom utils flush.console
+#' @importFrom lubridate minutes
 #' @export ProgressBarSet
 ProgressBarSet <- function(pb, value){
 
