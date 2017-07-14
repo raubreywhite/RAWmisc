@@ -45,7 +45,7 @@ ProgressBarSet <- function(pb, value){
               Format(timeTaken,digits=1),
               Format(timeLeft,digits=1)
               )
-  if(pb$flush){
+  if(pb$flush | value==pb$max){
     cat(retval)
     utils::flush.console()
   } else print(retval)
