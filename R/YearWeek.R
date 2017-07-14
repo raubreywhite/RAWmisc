@@ -1,7 +1,8 @@
 #' YearWeek
 #' @param date The date of interest
-#' @importFrom lubridate today year week
+#' @importFrom lubridate today
+#' @import data.table
 #' @export YearWeek
 YearWeek <- function(date=lubridate::today()){
-  return(sprintf("%s-%s",lubridate::year(date),lubridate::week(date)))
+  return(sprintf("%s-%s",data.table::year(date),data.table::isoweek(date)))
 }
