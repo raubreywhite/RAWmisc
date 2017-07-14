@@ -18,7 +18,7 @@ ProgressBarCreate <- function(min = 0, max = 1, flush=TRUE)
 #' @param pb A progress bar
 #' @param value The value
 #' @importFrom utils flush.console
-#' @importFrom lubridate minutes
+#' @importFrom lubridate now minutes
 #' @export ProgressBarSet
 ProgressBarSet <- function(pb, value){
 
@@ -38,7 +38,7 @@ ProgressBarSet <- function(pb, value){
               Format(timeTotal,digits=1),
               Format(propCompleted*100,digits=0),
               Format(timeTaken,digits=1),
-              format(Sys.time()+lubridate::minutes(round(timeLeft)),'%H:%M:%S'),
+              format(lubridate::now()+lubridate::minutes(round(timeLeft)),'%H:%M:%S'),
               Format(timeLeft,digits=1)
               )
   if(pb$flush){
