@@ -22,3 +22,4 @@ Suggests: testthat
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1
+Additional_repositories: https://raubreywhite.github.io/drat/
