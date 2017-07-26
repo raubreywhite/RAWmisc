@@ -3,6 +3,7 @@
 export(AllowFileManipulationFromInitialiseProject)
 export(CONFIG)
 export(CountriesNBtoEN)
+export(FileStable)
 export(Format)
 export(FortifyShapeFile)
 export(InitialiseProject)
