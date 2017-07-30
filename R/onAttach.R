@@ -1,8 +1,5 @@
-
 .onAttach <- function(libname, pkgname) {
-  # Runs when attached to search() path such as by library() or require()
-  packageStartupMessage('www.github.com/raubreywhite/')
-  if (interactive()) {
-    packageStartupMessage('[interactive session]')
-  }
+  packageStartupMessage('PACKAGE: RAWmisc')
+  packageStartupMessage('Version')
+  packageStartupMessage('Developed by Richard White, Norwegian Institute of Public Health')
 }
