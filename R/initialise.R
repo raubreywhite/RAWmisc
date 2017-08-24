@@ -39,6 +39,7 @@ InitialiseProject <- function(HOME=NULL,
 
     # Delete empty folders in shared folder
     if(!is.null(PROJ$SHARED)) for(f in list.files(PROJ$SHARED)){
+      if(f==lubridate::today()) next # don't want to delete today's folder
       f2 <- file.path(PROJ$SHARED,f)
       if(length(list.files(f2))==0){
         unlink(f2, recursive = T)
