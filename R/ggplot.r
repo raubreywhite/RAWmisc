@@ -65,4 +65,13 @@ theme_gray <- function(base_size=24, base_family=""){
 
 }
 
+#' theme_gray from ggplot2, but with responsive legend.key.size and panel.grid.major
+#' @param q base size
+#' @param filename text family
+#' @param landscape test
+#' @importFrom ggplot2 ggsave
+#' @export saveA4
+saveA4 <- function(q,filename,landscape=T){
+  ggsave(filename,plot=q,width=297,height=210, units="mm")
+}
 
