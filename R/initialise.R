@@ -12,6 +12,8 @@ AllowFileManipulationFromInitialiseProject <- function(){
 #' @param BAKED a
 #' @param FINAL a
 #' @param SHARED a
+#' @importFrom lubridate today
+#' @importFrom stringr str_detect
 #' @export InitialiseProject
 InitialiseProject <- function(HOME=NULL,
                               RAW=NULL,
@@ -39,7 +41,7 @@ InitialiseProject <- function(HOME=NULL,
 
     # Delete empty folders in shared folder
     if(!is.null(PROJ$SHARED)) for(f in list.files(PROJ$SHARED)){
-      if(f==lubridate::today()) next # don't want to delete today's folder
+      if(stringr::str_detect(f,"[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")) if(f==lubridate::today()) next # don't want to delete today's folder
       f2 <- file.path(PROJ$SHARED,f)
       if(length(list.files(f2))==0){
         unlink(f2, recursive = T)
