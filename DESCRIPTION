@@ -1,6 +1,6 @@
 Package: RAWmisc
 Title: R Convenience functions
-Version: 1.0.7
+Version: 1.1.0
 Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
 Description: Convenience functions for a variety of purposes.
 Depends:
@@ -17,7 +17,9 @@ Imports:
   magrittr,
   lubridate,
   data.table,
-  utils
+  utils,
+  processx,
+  stats
 Suggests: testthat
 License: GPL-3
 LazyData: true

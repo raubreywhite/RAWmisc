@@ -40,6 +40,7 @@ FormatEstCIFromEstSE <- Vectorize(FormatEstCIFromEstSE.int)
 #' @param va a
 #' @param nameBase a
 #' @param nameInteractions a
+#' @importFrom stats pnorm
 #' @export ExtractInteractedEffectEstimates
 ExtractInteractedEffectEstimates <- function(beta, va, nameBase, nameInteractions){
   lincom <- matrix(0,ncol=ncol(beta),nrow=(1+length(nameInteractions)))

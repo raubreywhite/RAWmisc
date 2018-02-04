@@ -5,7 +5,8 @@
 \title{Initialises project}
 \usage{
 InitialiseProject(HOME = NULL, RAW = NULL, CLEAN = NULL, BAKED = NULL,
-  FINAL = NULL, SHARED = NULL)
+  FINAL = NULL, SHARED = NULL, RCLONE_RAW = NULL, RCLONE_CLEAN = NULL,
+  RCLONE_BAKED = NULL, RCLONE_FINAL = NULL, RCLONE_SHARED = NULL)
 }
 \arguments{
 \item{HOME}{a}
@@ -19,6 +20,16 @@ InitialiseProject(HOME = NULL, RAW = NULL, CLEAN = NULL, BAKED = NULL,
 \item{FINAL}{a}
 
 \item{SHARED}{a}
+
+\item{RCLONE_RAW}{a}
+
+\item{RCLONE_CLEAN}{a}
+
+\item{RCLONE_BAKED}{a}
+
+\item{RCLONE_FINAL}{a}
+
+\item{RCLONE_SHARED}{a}
 }
 \description{
 Initialises project

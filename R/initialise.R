@@ -1,8 +1,70 @@
+#' Wrapper for RClone Sync
+#' @param from a
+#' @param to a
+#' @param createLocalIfRemoteDoesntExist a
+#' @importFrom processx run
+#' @importFrom stringr str_detect
+#' @export RCloneSync
+RCloneSync <- function(from,to,createLocalIfRemoteDoesntExist=FALSE){
+  if(processx::run("which","rclone",error_on_status=F, echo=F)$status!=0){
+    warning("RClone not installed")
+    return(0)
+  }
+  if(!file.exists("/home/rstudio/.config/rclone/rclone.conf")){
+    warning("/home/rstudio/.config/rclone/rclone.conf doesnt exist")
+    return(0)
+  }
+
+  fromIsRemote <- stringr::str_detect(from,":")
+  if(fromIsRemote){
+    if(file.exists(file.path(to,"xxxxx_data_downloaded_4938"))){
+      warning("Data has already been downloaded")
+      warning("Data will not be redownloaded")
+      return(0)
+    }
+  } else {
+    if(file.exists(file.path(from,"xxxxx_data_downloaded_4938"))){
+      unlink(file.path(from,"xxxxx_data_downloaded_4938"))
+    }
+  }
+
+  output <- processx::run(
+    "rclone",
+    c("ls",from),
+    error_on_status=F, echo=F)
+
+  if(fromIsRemote & createLocalIfRemoteDoesntExist & output$status!=0){
+    # from folder doesn't exist, create local folder
+    warning(sprintf("%s did not exist remotely, creating %s locally",from,to))
+    processx::run(
+      "mkdir",
+      c("-p",to)
+    )
+  } else if(output$status==0) {
+    # from folder does exist
+    output <- processx::run(
+      "rclone",
+      c("sync",from,to),
+      error_on_status=F, echo=F)
+
+    if(output$status!=0){
+      warning("SYNC FAILED")
+    }
+  }
+}
+
 #' Allows for InitialiseProject to manipulate files
 #' on your system
 #' @export AllowFileManipulationFromInitialiseProject
 AllowFileManipulationFromInitialiseProject <- function(){
   CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- TRUE
+}
+
+#' Allows for InitialiseProject to manipulate files
+#' on your system
+#' @export UseRClone
+UseRClone <- function(){
+  CONFIG$USE_RCLONE <- TRUE
 }
 
 #' Initialises project
@@ -12,6 +74,11 @@ AllowFileManipulationFromInitialiseProject <- function(){
 #' @param BAKED a
 #' @param FINAL a
 #' @param SHARED a
+#' @param RCLONE_RAW a
+#' @param RCLONE_CLEAN a
+#' @param RCLONE_BAKED a
+#' @param RCLONE_FINAL a
+#' @param RCLONE_SHARED a
 #' @importFrom lubridate today
 #' @importFrom stringr str_detect
 #' @export InitialiseProject
@@ -20,7 +87,12 @@ InitialiseProject <- function(HOME=NULL,
                               CLEAN=NULL,
                               BAKED=NULL,
                               FINAL=NULL,
-                              SHARED=NULL){
+                              SHARED=NULL,
+                              RCLONE_RAW=NULL,
+                              RCLONE_CLEAN=NULL,
+                              RCLONE_BAKED=NULL,
+                              RCLONE_FINAL=NULL,
+                              RCLONE_SHARED=NULL){
 
   PROJ$HOME <- HOME
   PROJ$RAW <- RAW
@@ -28,14 +100,32 @@ InitialiseProject <- function(HOME=NULL,
   PROJ$BAKED <- BAKED
   PROJ$FINAL <- FINAL
   PROJ$SHARED <- SHARED
+
+  PROJ$RCLONE_RAW <- RCLONE_RAW
+  PROJ$RCLONE_CLEAN <- RCLONE_CLEAN
+  PROJ$RCLONE_BAKED <- RCLONE_BAKED
+  PROJ$RCLONE_FINAL <- RCLONE_FINAL
+  PROJ$RCLONE_SHARED <- RCLONE_SHARED
+
   if(is.null(PROJ$SHARED)){
     PROJ$SHARED_TODAY <- NULL
+    PROJ$RCLONE_SHARED_TODAY <- NULL
   } else {
-    PROJ$SHARED_TODAY <- file.path(SHARED,lubridate::today())
+    PROJ$SHARED_TODAY <- file.path(PROJ$SHARED,lubridate::today())
+    PROJ$RCLONE_SHARED_TODAY <- file.path(PROJ$RCLONE_SHARED,lubridate::today())
+  }
+
+  if(CONFIG$USE_RCLONE){
+    for(i in c("RAW","CLEAN","BAKED","FINAL","SHARED_TODAY")){
+      if(!is.null(PROJ[[i]]) & !is.null(PROJ[[sprintf("RCLONE_%s",i)]])) RCloneSync(
+        from=PROJ[[sprintf("RCLONE_%s",i)]],
+        to=PROJ[[i]],
+        createLocalIfRemoteDoesntExist=T)
+    }
   }
 
   if(CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT){
-    for(i in names(PROJ)){
+    for(i in c("HOME","RAW","CLEAN","BAKED","FINAL","SHARED","SHARED_TODAY")){
       if(!is.null(PROJ[[i]])) if(!dir.exists(PROJ[[i]])) dir.create(PROJ[[i]], recursive=TRUE)
     }
 
@@ -53,5 +143,17 @@ InitialiseProject <- function(HOME=NULL,
 
   fileSources = file.path("code",list.files("code",pattern="*.[rR]$"))
   sapply(fileSources,source,.GlobalEnv)
- }
+}
+
+#' Initialises project
+#' @export SaveProject
+SaveProject <- function(){
+  if(CONFIG$USE_RCLONE){
+    for(i in c("CLEAN","BAKED","FINAL","SHARED_TODAY")){
+      if(!is.null(PROJ[[i]]) & !is.null(PROJ[[sprintf("RCLONE_%s",i)]])) RCloneSync(
+        from=PROJ[[i]],
+        to=PROJ[[sprintf("RCLONE_%s",i)]])
+    }
+  }
+}
 
