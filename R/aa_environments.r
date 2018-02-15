@@ -7,6 +7,7 @@ PROJ <- new.env(parent = emptyenv())
 CONFIG <- new.env(parent = emptyenv())
 CONFIG$ALLOW_FILE_MANIPULATION_FROM_INITIALISE_PROJECT <- FALSE
 CONFIG$USE_RCLONE <- FALSE
+CONFIG$FORCE_RCLONE_RESYNC <- FALSE
 
 #' BLAH
 #' @export NORCHAR

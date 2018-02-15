@@ -6,6 +6,9 @@
 #' @importFrom stringr str_detect
 #' @export RCloneSync
 RCloneSync <- function(from,to,createLocalIfRemoteDoesntExist=FALSE){
+  from <- gsub("//","/",from)
+  to <- gsub("//","/",to)
+
   if(processx::run("which","rclone",error_on_status=F, echo=F)$status!=0){
     warning("RClone not installed")
     return(0)
@@ -17,7 +20,7 @@ RCloneSync <- function(from,to,createLocalIfRemoteDoesntExist=FALSE){
 
   fromIsRemote <- stringr::str_detect(from,":")
   if(fromIsRemote){
-    if(file.exists(file.path(to,"xxxxx_data_downloaded_4938"))){
+    if(!CONFIG$FORCE_RCLONE_RESYNC & file.exists(file.path(to,"xxxxx_data_downloaded_4938"))){
       warning("Data has already been downloaded")
       warning("Data will not be redownloaded")
       return(0)
@@ -64,7 +67,14 @@ AllowFileManipulationFromInitialiseProject <- function(){
 #' on your system
 #' @export UseRClone
 UseRClone <- function(){
-  CONFIG$USE_RCLONE <- TRUE
+  if(file.exists("/home/rstudio/.config/rclone/rclone.conf")) CONFIG$USE_RCLONE <- TRUE
+}
+
+#' Forces RCloneSync to resync, even if
+#' already downloaded
+#' @export ForceRCloneResync
+ForceRCloneResync <- function(){
+  CONFIG$FORCE_RCLONE_RESYNC <- TRUE
 }
 
 #' Initialises project
