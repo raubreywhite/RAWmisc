@@ -112,7 +112,7 @@ InitialiseProject <- function(HOME=NULL,
     PROJ$RCLONE_SHARED_TODAY <- NULL
   } else {
     PROJ$SHARED_TODAY <- file.path(PROJ$SHARED,lubridate::today())
-    PROJ$RCLONE_SHARED_TODAY <- file.path(PROJ$RCLONE_SHARED,lubridate::today())
+    if(!is.null(PROJ$RCLONE_SHARED)) PROJ$RCLONE_SHARED_TODAY <- file.path(PROJ$RCLONE_SHARED,lubridate::today())
   }
 
   if(CONFIG$USE_RCLONE){
