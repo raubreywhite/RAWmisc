@@ -3,7 +3,7 @@
 #' @param file The file of interest
 #' @param delay Number of seconds between checking file size a second time
 #' @export IsFileStable
-IsFileStable <- function(file=tempfile(), delay=1){
+IsFileStable <- function(file=tempfile(), delay=5){
   if (file.exists(file)){
     size1 <- file.info(file)$size[1]
     Sys.sleep(delay)

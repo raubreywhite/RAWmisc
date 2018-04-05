@@ -4,7 +4,7 @@
 \alias{RecodeDT}
 \title{Allows for recoding of variables}
 \usage{
-RecodeDT(d, switch, var)
+RecodeDT(d, switch, var, oldOnLeft = TRUE)
 }
 \arguments{
 \item{d}{a}
@@ -12,6 +12,8 @@ RecodeDT(d, switch, var)
 \item{switch}{a vector coded like: c("old"="new")}
 
 \item{var}{a}
+
+\item{oldOnLeft}{a}
 }
 \description{
 Allows for recoding of variables

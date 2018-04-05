@@ -5,7 +5,7 @@
 \title{IsFileStable
 This determines if the file is stable (size not increasing/decreasing)}
 \usage{
-IsFileStable(file = tempfile(), delay = 1)
+IsFileStable(file = tempfile(), delay = 5)
 }
 \arguments{
 \item{file}{The file of interest}

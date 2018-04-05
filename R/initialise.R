@@ -155,6 +155,35 @@ InitialiseProject <- function(HOME=NULL,
   sapply(fileSources,source,.GlobalEnv)
 }
 
+#' Initialises project on a unix machine in an opinionated manner
+#' @param project location of project
+#' @export InitialiseOpinionatedUnix
+InitialiseOpinionatedUnix <- function(project){
+  if(.Platform$OS.type=="unix"){
+    UseRClone()
+    AllowFileManipulationFromInitialiseProject()
+
+    if(dir.exists("/dropbox")){
+      SHARED <- sprintf("/dropbox/analyses/results_shared/%s",project)
+      RCLONE_SHARED <- NULL
+    } else {
+      SHARED <- sprintf("/tmp/results_shared/%s",project)
+      RCLONE_SHARED <- sprintf("data:/analyses/results_shared/%s/",project)
+    }
+
+    InitialiseProject(
+      HOME = sprintf("/git/%s/",project),
+      RAW = sprintf("/tmp/data_raw/%s/",project),
+      CLEAN = sprintf("/tmp/data_clean/%s/",project),
+      BAKED = sprintf("/tmp/results_baked/%s/",project),
+      FINAL = sprintf("/tmp/results_final/%s/",project),
+      SHARED = SHARED,
+      RCLONE_RAW = sprintf("crypt:/data_raw/%s/",project),
+      RCLONE_SHARED = RCLONE_SHARED
+    )
+  }
+}
+
 #' Initialises project
 #' @export SaveProject
 SaveProject <- function(){
