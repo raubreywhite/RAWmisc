@@ -14,9 +14,9 @@ RecodeDT <- function(d,switch,var,oldOnLeft=TRUE){
     newNames <- names(switch)
   }
   if(is.numeric(d[[var]])){
-    switch <- data.table::data.table(orig=as.numeric(names(switch)),replace=as.numeric(switch))
+    switch <- data.table::data.table(orig=as.numeric(oldNames),replace=as.numeric(newNames))
   } else {
-    switch <- data.table::data.table(orig=names(switch),replace=switch)
+    switch <- data.table::data.table(orig=oldNames,replace=newNames)
   }
 
   txt <- sprintf("d[switch, on=.(%s=orig), %s:=replace]",var,var)
