@@ -5,12 +5,16 @@
 \title{FormatResultsStack
 This formats the results from the stack}
 \usage{
-FormatResultsStack(results, bonf)
+FormatResultsStack(results, bonf, useWald, useLRT)
 }
 \arguments{
 \item{results}{The results}
 
 \item{bonf}{do we want bonferroni correction?}
+
+\item{useWald}{do we want significance shown on the wald pvalue?}
+
+\item{useLRT}{do we want significance shown on the lrt pvalue?}
 }
 \description{
 FormatResultsStack

@@ -5,12 +5,14 @@
 \title{ProcessStack
 This processes one value from the stack}
 \usage{
-ProcessStack(stack, i = 1)
+ProcessStack(stack, i, formatResults = FALSE)
 }
 \arguments{
 \item{stack}{The stack}
 
 \item{i}{The i'th stack value}
+
+\item{formatResults}{do you want the results formatted?}
 }
 \description{
 ProcessStack

@@ -19,7 +19,8 @@ Imports:
   data.table,
   utils,
   processx,
-  stats
+  stats,
+  lmtest
 Suggests: testthat
 License: GPL-3
 LazyData: true
