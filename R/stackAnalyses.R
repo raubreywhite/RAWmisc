@@ -84,6 +84,7 @@ CreateStackSkeleton <- function(n=1){
 #' @param i The i'th stack value
 #' @param formatResults do you want the results formatted?
 #' @importFrom stats glm binomial gaussian coef as.formula
+#' @importFrom stringr str_split
 #' @import data.table
 #' @export ProcessStack
 ProcessStack <- function(stack,i,formatResults=FALSE){
@@ -136,11 +137,11 @@ ProcessStack <- function(stack,i,formatResults=FALSE){
 
   fit <- list()
   dataCrude <- copy(get(stack$data[[i]]))
-  for(j in c(stack$exposure[[i]])){
+  for(j in unlist(stringr::str_split(stack$exposure[[i]],"[:*]"))){
     dataCrude <- dataCrude[!is.na(dataCrude[[j]])]
   }
   dataAdj <- copy(dataCrude)
-  for(j in c(stack$confounders[[i]])){
+  for(j in unlist(stringr::str_split(stack$confounders[[i]],"[:*]"))){
     dataAdj <- dataAdj[!is.na(dataAdj[[j]])]
   }
 
@@ -285,11 +286,11 @@ FormatResultsStack <- function(results,bonf,useWald,useLRT){
                   "a_p_lrt")
   }
 
-  retval[,c_p_wald:=RAWmisc::FormatPValue(c_p_wald,digits=3)]
-  retval[,a_p_wald:=RAWmisc::FormatPValue(a_p_wald,digits=3)]
+  retval[,c_p_wald:=RAWmisc::FormatPValue(c_p_wald)]
+  retval[,a_p_wald:=RAWmisc::FormatPValue(a_p_wald)]
 
-  retval[,c_p_lrt:=RAWmisc::FormatPValue(c_p_lrt,digits=3)]
-  retval[,a_p_lrt:=RAWmisc::FormatPValue(a_p_lrt,digits=3)]
+  retval[,c_p_lrt:=RAWmisc::FormatPValue(c_p_lrt)]
+  retval[,a_p_lrt:=RAWmisc::FormatPValue(a_p_lrt)]
 
   retval[,c_est:=sprintf("%s%s",c_est,c_sig)]
   retval[,a_est:=sprintf("%s%s",a_est,a_sig)]
