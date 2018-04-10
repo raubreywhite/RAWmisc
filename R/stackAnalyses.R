@@ -81,10 +81,10 @@ ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
   sp <- NULL
   eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
   dataNew0 <- data[1,]
-  dataNew0[[ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
+  dataNew0[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
 
   dataNew1 <- data[1,]
-  dataNew1[[ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
+  dataNew1[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
 
   newFormula <- stringr::str_replace_all(Reduce(paste, deparse(fit1$formula))," ","")
   newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
@@ -95,17 +95,35 @@ ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
                                          sprintf("c(%s)",paste0(attributes(sp)$Boundary.knots,collapse=","))
                                         ))
 
-  m0 <- as.matrix(model.frame(newFormula,data=dataNew0))
-  m1 <- as.matrix(model.frame(newFormula,data=dataNew1))
-  m0[,1] <- m1[,1] <- 1
+  m0temp <- model.frame(newFormula,data=dataNew0)
+  m1temp <- model.frame(newFormula,data=dataNew1)
+  m0 <- c(1)
+  m1 <- c(1)
+  # starts from 2 to avoid the Y, which is the first value!!
+  for(i in 2:length(m0temp)){
+    if(!is.factor(m0temp[[i]])){
+      m0 <- c(m0,m0temp[[i]])
+    } else {
+      m0 <- c(m0,as.numeric(levels(m0temp[[i]])==m0temp[[i]])[-1])
+    }
+  }
+  for(i in 2:length(m1temp)){
+    if(!is.factor(m1temp[[i]])){
+      m1 <- c(m1,m1temp[[i]])
+    } else {
+      m1 <- c(m1,as.numeric(levels(m1temp[[i]])==m1temp[[i]])[-1])
+    }
+  }
   changedVars <- m0!=m1
+  m0 <- matrix(m0,nrow=1)
+  m1 <- matrix(m1,nrow=1)
 
   estDif <- (m1[,changedVars]-m0[,changedVars]) %*% coef(fit1)[changedVars]
 
   newVCOV <- vcov(fit1)[changedVars,changedVars]
   newVCOV <- rbind(newVCOV,newVCOV)
   newVCOV <- cbind(newVCOV,newVCOV)
-  m <- c(m1[changedVars],-m0[changedVars])
+  m <- c(m1[,changedVars],-m0[,changedVars])
 
   newVar <- 0
   for(j in 1:length(m)) for(k in 1:length(m)) newVar <- newVar + m[j]*m[k]*newVCOV[j,k]
