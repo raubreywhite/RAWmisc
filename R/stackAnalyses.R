@@ -87,7 +87,7 @@ ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
   dataNew1[[ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
 
   newFormula <- stringr::str_replace_all(Reduce(paste, deparse(fit1$formula))," ","")
-  newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9,=]*\\))","ns\\1&&")
+  newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
   newFormula <- stringr::str_replace_all(newFormula,"\\)&&",
                                          sprintf(",knots=%s,intercept=%s,Boundary.knots=%s\\)",
                                          sprintf("c(%s)",paste0(attributes(sp)$knots,collapse=",")),
