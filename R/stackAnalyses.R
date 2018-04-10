@@ -233,8 +233,6 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
   }
   retval <- copy(results)
 
-  bonf <- FALSE
-
   c_pbonf <- NULL
   c_p_wald <- NULL
   a_pbonf <- NULL
@@ -254,11 +252,9 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
   if (bonf & useWald) {
     retval[, c_pbonf := stats::p.adjust(c_p_wald, method = "bonf")]
     retval[, a_pbonf := stats::p.adjust(a_p_wald, method = "bonf")]
-    bonf <- TRUE
   } else if (bonf & useLRT) {
     retval[, c_pbonf := stats::p.adjust(c_p_lrt, method = "bonf")]
     retval[, a_pbonf := stats::p.adjust(a_p_lrt, method = "bonf")]
-    bonf <- TRUE
   } else if (useWald) {
     retval[, c_sig := ifelse(c_p_wald < 0.05, "*", "")]
     retval[, a_sig := ifelse(a_p_wald < 0.05, "*", "")]
