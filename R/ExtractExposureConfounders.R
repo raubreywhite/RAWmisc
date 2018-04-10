@@ -3,8 +3,13 @@
 #' @param var The results
 #' @export DetectSpline
 DetectSpline <- function(var){
+  if(length(var)==0) return(FALSE)
+  retval <- FALSE
+  for(i in var){
+    if(!is.na(i)) if(stringr::str_detect(var,"ns\\([a-zA-Z0-9_]*,")) retval <- TRUE
+  }
   # detect if spline
-  return(stringr::str_detect(var,"ns\\([a-zA-Z0-9_]*,"))
+  return(retval)
 }
 
 #' ExtractExposureConfounders.int
@@ -33,6 +38,9 @@ ExtractExposureConfounders.int <- function(var){
 #' @importFrom stats na.omit
 #' @export ExtractExposureConfounders
 ExtractExposureConfounders <- function(var){
+  var <- na.omit(unique(var))
+  if(length(var)==0) return(NULL)
+
   res <- c()
   for(i in var) res <- c(res,ExtractExposureConfounders.int(i))
   res <- na.omit(unique(res))
