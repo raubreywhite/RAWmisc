@@ -59,7 +59,7 @@ ExtractFits <- function(fit0, fit1) {
   res$var <- row.names(res)
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
-  res <- res[, c("var", "n", "b", "se", "z", "p_wald", "p_lrt")]
+  res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
   setDT(res)
   return(res)
 }
@@ -170,12 +170,13 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   res_crude <- RAWmisc::ExtractFits(fit0 = fit[["crude0"]], fit1 = fit[["crude1"]])
   res_adj <- RAWmisc::ExtractFits(fit0 = fit[["adj0"]], fit1 = fit[["adj1"]])
 
-  setnames(res_crude, c("var", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt"))
-  setnames(res_adj, c("var", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt"))
+  setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt"))
+  setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt"))
 
   res <- merge(res_crude, res_adj, by = "var")
 
   res[, regressionType := stack$regressionType[[i]]]
+  res[, outcome := stack$outcome[[i]]]
 
   if (formatResults) {
     res[, a_est := RAWmisc::FormatEstCIFromEstSE(beta = a_b, se = a_se, exp = expResults)]
@@ -183,7 +184,8 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
     res <- res[res$var != "(Intercept)", c(
       "regressionType",
-      "var",
+      "outcome",
+      "exposure",
       "c_n",
       "c_est",
       "c_p_wald",
@@ -196,7 +198,8 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   } else {
     res <- res[res$var != "(Intercept)", c(
       "regressionType",
-      "var",
+      "outcome",
+      "exposure",
       "c_n",
       "c_b",
       "c_se",
@@ -272,7 +275,8 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
 
     varOrder <- c(
       "regressionType",
-      "var",
+      "outcome",
+      "exposure",
       "c_n",
       "c_est",
       "c_p_wald",
@@ -287,7 +291,8 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
   } else {
     varOrder <- c(
       "regressionType",
-      "var",
+      "outcome",
+      "exposure",
       "c_n",
       "c_est",
       "c_p_wald",
