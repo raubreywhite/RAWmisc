@@ -100,18 +100,18 @@ ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
   m0 <- c(1)
   m1 <- c(1)
   # starts from 2 to avoid the Y, which is the first value!!
-  for(i in 2:length(m0temp)){
-    if(!is.factor(m0temp[[i]])){
-      m0 <- c(m0,m0temp[[i]])
+  for(j in 2:length(m0temp)){
+    if(!is.factor(m0temp[[j]])){
+      m0 <- c(m0,m0temp[[j]])
     } else {
-      m0 <- c(m0,as.numeric(levels(m0temp[[i]])==m0temp[[i]])[-1])
+      m0 <- c(m0,as.numeric(levels(m0temp[[j]])==m0temp[[j]])[-1])
     }
   }
-  for(i in 2:length(m1temp)){
-    if(!is.factor(m1temp[[i]])){
-      m1 <- c(m1,m1temp[[i]])
+  for(j in 2:length(m1temp)){
+    if(!is.factor(m1temp[[j]])){
+      m1 <- c(m1,m1temp[[j]])
     } else {
-      m1 <- c(m1,as.numeric(levels(m1temp[[i]])==m1temp[[i]])[-1])
+      m1 <- c(m1,as.numeric(levels(m1temp[[j]])==m1temp[[j]])[-1])
     }
   }
   changedVars <- m0!=m1
@@ -161,7 +161,7 @@ CreateStackSkeleton <- function(n=1) {
 #' @param stack The stack
 #' @param i The i'th stack value
 #' @param formatResults do you want the results formatted?
-#' @importFrom stats glm binomial gaussian coef as.formula
+#' @importFrom stats glm binomial gaussian poisson coef as.formula
 #' @importFrom stringr str_split
 #' @import data.table
 #' @export ProcessStack
