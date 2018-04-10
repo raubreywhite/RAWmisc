@@ -6,7 +6,7 @@ DetectSpline <- function(var){
   if(length(var)==0) return(FALSE)
   retval <- FALSE
   for(i in var){
-    if(!is.na(i)) if(stringr::str_detect(var,"ns\\([a-zA-Z0-9_]*,")) retval <- TRUE
+    if(!is.na(i)) if(stringr::str_detect(i,"ns\\([a-zA-Z0-9_]*,")) retval <- TRUE
   }
   # detect if spline
   return(retval)
