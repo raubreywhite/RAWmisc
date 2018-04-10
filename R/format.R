@@ -1,3 +1,11 @@
+#' Calculates pvalues
+#' @param beta a
+#' @param se a
+#' @export CalcPValue
+CalcPValue <- function(beta,se){
+  2*(1-pnorm(abs(beta/se)))
+}
+
 #' Allows for recoding of variables
 #' @param x a
 #' @param digits a
@@ -43,6 +51,9 @@ FormatEstCIFromEstSE <- Vectorize(FormatEstCIFromEstSE.int)
 #' @importFrom stats pnorm
 #' @export ExtractInteractedEffectEstimates
 ExtractInteractedEffectEstimates <- function(beta, va, nameBase, nameInteractions){
+  if(is.null(ncol(beta))){
+    beta <- as.data.frame(t(beta))
+  }
   lincom <- matrix(0,ncol=ncol(beta),nrow=(1+length(nameInteractions)))
   lincom[,which(names(beta)==nameBase)] <- 1
   for(i in 1:length(nameInteractions)){
@@ -61,7 +72,7 @@ ExtractInteractedEffectEstimates <- function(beta, va, nameBase, nameInteraction
       se[i] <- sqrt(sum(vars)+2*covar)
     }
   }
-  p <- 2*(1-pnorm(abs(beta/se)))
+  p <- RAWmisc::CalcPValue(beta=beta,se=se)
   return(list("beta"=beta,"se"=se,"p"=p))
 }
 

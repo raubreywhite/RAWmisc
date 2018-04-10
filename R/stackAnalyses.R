@@ -51,15 +51,75 @@ LRTest <- function(fit0, fit1) {
 #' @param fit0 The variable of interest
 #' @param fit1 The variable of interest
 #' @import data.table
+#' @importFrom stats AIC
 #' @export ExtractFits
 ExtractFits <- function(fit0, fit1) {
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame(coef(summary(fit1)))
   names(res) <- c("b", "se", "z", "p_wald")
-  res$var <- row.names(res)
+  res$exposure <- row.names(res)
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
+  res$aic <- AIC(fit1)
+  setDT(res)
+  return(res)
+}
+
+#' ExtractFitsSplines
+#' Extract fits
+#' @param fit0 The variable of interest
+#' @param fit1 The variable of interest
+#' @param stack stack
+#' @param i i
+#' @param data data
+#' @importFrom stringr str_replace_all
+#' @importFrom stats model.frame coef vcov AIC
+#' @import data.table
+#' @export ExtractFitsSplines
+ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
+  sp <- NULL
+  eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
+  dataNew0 <- data[1,]
+  dataNew0[[ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
+
+  dataNew1 <- data[1,]
+  dataNew1[[ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
+
+  newFormula <- stringr::str_replace_all(Reduce(paste, deparse(fit1$formula))," ","")
+  newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9,=]*\\))","ns\\1&&")
+  newFormula <- stringr::str_replace_all(newFormula,"\\)&&",
+                                         sprintf(",knots=%s,intercept=%s,Boundary.knots=%s\\)",
+                                         sprintf("c(%s)",paste0(attributes(sp)$knots,collapse=",")),
+                                         attributes(sp)$intercept,
+                                         sprintf("c(%s)",paste0(attributes(sp)$Boundary.knots,collapse=","))
+                                        ))
+
+  m0 <- as.matrix(model.frame(newFormula,data=dataNew0))
+  m1 <- as.matrix(model.frame(newFormula,data=dataNew1))
+  m0[,1] <- m1[,1] <- 1
+  changedVars <- m0!=m1
+
+  estDif <- (m1[,changedVars]-m0[,changedVars]) %*% coef(fit1)[changedVars]
+
+  newVCOV <- vcov(fit1)[changedVars,changedVars]
+  newVCOV <- rbind(newVCOV,newVCOV)
+  newVCOV <- cbind(newVCOV,newVCOV)
+  m <- c(m1[changedVars],-m0[changedVars])
+
+  newVar <- 0
+  for(j in 1:length(m)) for(k in 1:length(m)) newVar <- newVar + m[j]*m[k]*newVCOV[j,k]
+
+  p_lrt <- RAWmisc::LRTest(fit0, fit1)
+  res <- data.frame("b"=estDif,
+                    "se"=sqrt(newVar),
+                    "z"=estDif/sqrt(newVar),
+                    "p_wald" = RAWmisc::CalcPValue(beta=estDif,se=sqrt(newVar)))
+  res$exposure <- sprintf("0 to 1, %s",stack$exposure[[i]])
+  res$n <- sum(!is.na(fit1$fitted.values))
+  res$p_lrt <- p_lrt
+  res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
+  res$aic <- AIC(fit1)
   setDT(res)
   return(res)
 }
@@ -88,11 +148,12 @@ CreateStackSkeleton <- function(n=1) {
 #' @import data.table
 #' @export ProcessStack
 ProcessStack <- function(stack, i, formatResults=FALSE) {
-  if (!stack$regressionType[[i]] %in% c("logistic", "linear")) {
+  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson")) {
     stop("Non-supported regression type")
   }
 
   regressionType <- NULL
+  outcome <- NULL
   a_est <- NULL
   a_b <- NULL
   a_se <- NULL
@@ -103,9 +164,12 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   if (stack$regressionType[[i]] == "logistic") {
     analysisFamily <- binomial()
     expResults <- TRUE
-  } else {
+  } else if(stack$regressionType[[i]] == "linear"){
     analysisFamily <- gaussian()
     expResults <- FALSE
+  } else if(stack$regressionType[[i]] == "poisson"){
+    analysisFamily <- poisson()
+    expResults <- TRUE
   }
 
   form_crude0 <- sprintf(
@@ -145,11 +209,12 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
   fit <- list()
   dataCrude <- copy(get(stack$data[[i]]))
-  for (j in unlist(stringr::str_split(stack$exposure[[i]], "[:*]"))) {
+  setDT(dataCrude)
+  for (j in RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])) {
     dataCrude <- dataCrude[!is.na(dataCrude[[j]])]
   }
   dataAdj <- copy(dataCrude)
-  for (j in unlist(stringr::str_split(stack$confounders[[i]], "[:*]"))) {
+  for (j in RAWmisc::ExtractExposureConfounders(stack$confounders[[i]])) {
     if (is.na(j)) next
     dataAdj <- dataAdj[!is.na(dataAdj[[j]])]
   }
@@ -167,13 +232,28 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     )
   }
 
-  res_crude <- RAWmisc::ExtractFits(fit0 = fit[["crude0"]], fit1 = fit[["crude1"]])
-  res_adj <- RAWmisc::ExtractFits(fit0 = fit[["adj0"]], fit1 = fit[["adj1"]])
+  if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+    res_crude <- RAWmisc::ExtractFitsSplines(
+      fit0 = fit[["crude0"]],
+      fit1 = fit[["crude1"]],
+      stack = stack,
+      i = i,
+      data=dataCrude)
+    res_adj <- RAWmisc::ExtractFitsSplines(
+      fit0 = fit[["adj0"]],
+      fit1 = fit[["adj1"]],
+      stack = stack,
+      i = i,
+      data=dataAdj)
+  } else {
+    res_crude <- RAWmisc::ExtractFits(fit0 = fit[["crude0"]], fit1 = fit[["crude1"]])
+    res_adj <- RAWmisc::ExtractFits(fit0 = fit[["adj0"]], fit1 = fit[["adj1"]])
+  }
 
-  setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt"))
-  setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt"))
+  setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt","c_aic"))
+  setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt","a_aic"))
 
-  res <- merge(res_crude, res_adj, by = "var")
+  res <- merge(res_crude, res_adj, by = "exposure")
 
   res[, regressionType := stack$regressionType[[i]]]
   res[, outcome := stack$outcome[[i]]]
@@ -182,7 +262,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     res[, a_est := RAWmisc::FormatEstCIFromEstSE(beta = a_b, se = a_se, exp = expResults)]
     res[, c_est := RAWmisc::FormatEstCIFromEstSE(beta = c_b, se = c_se, exp = expResults)]
 
-    res <- res[res$var != "(Intercept)", c(
+    res <- res[res$exposure != "(Intercept)", c(
       "regressionType",
       "outcome",
       "exposure",
@@ -190,13 +270,15 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       "c_est",
       "c_p_wald",
       "c_p_lrt",
+      "c_aic",
       "a_n",
       "a_est",
       "a_p_wald",
-      "a_p_lrt"
+      "a_p_lrt",
+      "a_aic"
     )]
   } else {
-    res <- res[res$var != "(Intercept)", c(
+    res <- res[res$exposure != "(Intercept)", c(
       "regressionType",
       "outcome",
       "exposure",
@@ -206,12 +288,14 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       "c_z",
       "c_p_wald",
       "c_p_lrt",
+      "c_aic",
       "a_n",
       "a_b",
       "a_se",
       "a_z",
       "a_p_wald",
-      "a_p_lrt"
+      "a_p_lrt",
+      "a_aic"
     )]
   }
 
@@ -282,11 +366,13 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
       "c_p_wald",
       "c_p_lrt",
       "c_pbonf",
+      "c_aic",
       "a_n",
       "a_est",
       "a_p_wald",
       "a_p_lrt",
-      "a_pbonf"
+      "a_pbonf",
+      "a_aic"
     )
   } else {
     varOrder <- c(
@@ -297,10 +383,12 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
       "c_est",
       "c_p_wald",
       "c_p_lrt",
+      "c_aic",
       "a_n",
       "a_est",
       "a_p_wald",
-      "a_p_lrt"
+      "a_p_lrt",
+      "a_aic"
     )
   }
 
