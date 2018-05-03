@@ -50,10 +50,11 @@ LRTest <- function(fit0, fit1) {
 #' Extract fits
 #' @param fit0 The variable of interest
 #' @param fit1 The variable of interest
+#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
 #' @import data.table
 #' @importFrom stats AIC
 #' @export ExtractFits
-ExtractFits <- function(fit0, fit1) {
+ExtractFits <- function(fit0, fit1, fit1aic) {
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame(coef(summary(fit1)))
   names(res) <- c("b", "se", "z", "p_wald")
@@ -61,7 +62,7 @@ ExtractFits <- function(fit0, fit1) {
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
-  res$aic <- AIC(fit1)
+  res$aic <- AIC(fit1aic)
   setDT(res)
   return(res)
 }
@@ -70,6 +71,7 @@ ExtractFits <- function(fit0, fit1) {
 #' Extract fits
 #' @param fit0 The variable of interest
 #' @param fit1 The variable of interest
+#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
 #' @param stack stack
 #' @param i i
 #' @param data data
@@ -77,7 +79,7 @@ ExtractFits <- function(fit0, fit1) {
 #' @importFrom stats model.frame coef vcov AIC
 #' @import data.table
 #' @export ExtractFitsSplines
-ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
+ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data){
   sp <- NULL
   eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
   dataNew0 <- data[1,]
@@ -137,7 +139,7 @@ ExtractFitsSplines <- function(fit0, fit1, stack, i, data){
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
-  res$aic <- AIC(fit1)
+  res$aic <- AIC(fit1aic)
   setDT(res)
   return(res)
 }
@@ -162,11 +164,11 @@ CreateStackSkeleton <- function(n=1) {
 #' @param i The i'th stack value
 #' @param formatResults do you want the results formatted?
 #' @importFrom stats glm binomial gaussian poisson coef as.formula
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_replace
 #' @import data.table
 #' @export ProcessStack
 ProcessStack <- function(stack, i, formatResults=FALSE) {
-  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson")) {
+  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson","quasipoisson")) {
     stop("Non-supported regression type")
   }
 
@@ -180,13 +182,17 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   c_se <- NULL
 
   if (stack$regressionType[[i]] == "logistic") {
-    analysisFamily <- binomial()
+    aicFamily <- analysisFamily <- binomial()
     expResults <- TRUE
   } else if(stack$regressionType[[i]] == "linear"){
-    analysisFamily <- gaussian()
+    aicFamily <- analysisFamily <- gaussian()
     expResults <- FALSE
   } else if(stack$regressionType[[i]] == "poisson"){
-    analysisFamily <- poisson()
+    aicFamily <- analysisFamily <- poisson()
+    expResults <- TRUE
+  } else if(stack$regressionType[[i]] == "quasipoisson"){
+    analysisFamily <- quasipoisson()
+    aicFamily <- poisson()
     expResults <- TRUE
   }
 
@@ -237,16 +243,23 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     dataAdj <- dataAdj[!is.na(dataAdj[[j]])]
   }
 
-  for (j in c("crude0", "crude1", "adj0", "adj1")) {
-    if (j %in% c("crude0", "crude1")) {
+  for (j in c("crude0", "crude1", "aic_crude1", "adj0", "adj1", "aic_adj1")) {
+    if (j %in% c("crude0", "crude1", "aic_crude1")) {
       dataUse <- dataCrude
     } else {
       dataUse <- dataAdj
     }
+    if(j %in% c("aic_crude1","aic_adj1")){
+      familyUse <- aicFamily
+    } else {
+      familyUse <- dataAdj
+    }
+    formula_form <- stringr::str_replace(j,"aic_","")
+
     fit[[j]] <- glm(
-      as.formula(get(sprintf("form_%s", j))),
+      as.formula(get(sprintf("form_%s", formula_form))),
       data = dataUse,
-      family = analysisFamily
+      family = familyUse
     )
   }
 
@@ -254,18 +267,26 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     res_crude <- RAWmisc::ExtractFitsSplines(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
+      fit1aic = fit[["aic_crude1"]],
       stack = stack,
       i = i,
       data=dataCrude)
     res_adj <- RAWmisc::ExtractFitsSplines(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
+      fit1aic = fit[["aic_adj1"]],
       stack = stack,
       i = i,
       data=dataAdj)
   } else {
-    res_crude <- RAWmisc::ExtractFits(fit0 = fit[["crude0"]], fit1 = fit[["crude1"]])
-    res_adj <- RAWmisc::ExtractFits(fit0 = fit[["adj0"]], fit1 = fit[["adj1"]])
+    res_crude <- RAWmisc::ExtractFits(
+      fit0 = fit[["crude0"]],
+      fit1 = fit[["crude1"]],
+      fit1aic = fit[["aic_crude1"]])
+    res_adj <- RAWmisc::ExtractFits(
+      fit0 = fit[["adj0"]],
+      fit1 = fit[["adj1"]],
+      fit1aic = fit[["aic_adj1"]])
   }
 
   setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt","c_aic"))

@@ -5,12 +5,14 @@
 \title{ExtractFitsSplines
 Extract fits}
 \usage{
-ExtractFitsSplines(fit0, fit1, stack, i, data)
+ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data)
 }
 \arguments{
 \item{fit0}{The variable of interest}
 
 \item{fit1}{The variable of interest}
+
+\item{fit1aic}{with a possibly more friendly family (possion instead of quasipoisson)}
 
 \item{stack}{stack}
 
