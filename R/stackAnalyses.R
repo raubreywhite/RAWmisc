@@ -252,7 +252,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     if(j %in% c("aic_crude1","aic_adj1")){
       familyUse <- aicFamily
     } else {
-      familyUse <- dataAdj
+      familyUse <- analysisFamily
     }
     formula_form <- stringr::str_replace(j,"aic_","")
 
