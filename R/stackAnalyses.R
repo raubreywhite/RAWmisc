@@ -163,7 +163,7 @@ CreateStackSkeleton <- function(n=1) {
 #' @param stack The stack
 #' @param i The i'th stack value
 #' @param formatResults do you want the results formatted?
-#' @importFrom stats glm binomial gaussian poisson coef as.formula
+#' @importFrom stats glm binomial gaussian poisson quasipoisson coef as.formula
 #' @importFrom stringr str_split str_replace
 #' @import data.table
 #' @export ProcessStack
