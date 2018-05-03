@@ -163,12 +163,13 @@ CreateStackSkeleton <- function(n=1) {
 #' @param stack The stack
 #' @param i The i'th stack value
 #' @param formatResults do you want the results formatted?
-#' @importFrom stats glm binomial gaussian poisson quasipoisson coef as.formula
+#' @importFrom stats glm binomial gaussian poisson coef as.formula
+#' @importFrom MASS glm.nb
 #' @importFrom stringr str_split str_replace
 #' @import data.table
 #' @export ProcessStack
 ProcessStack <- function(stack, i, formatResults=FALSE) {
-  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson","quasipoisson")) {
+  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson","negbin")) {
     stop("Non-supported regression type")
   }
 
@@ -190,9 +191,8 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   } else if(stack$regressionType[[i]] == "poisson"){
     aicFamily <- analysisFamily <- poisson()
     expResults <- TRUE
-  } else if(stack$regressionType[[i]] == "quasipoisson"){
-    analysisFamily <- quasipoisson()
-    aicFamily <- poisson()
+  } else if(stack$regressionType[[i]] == "negbin"){
+
     expResults <- TRUE
   }
 
@@ -256,11 +256,18 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     }
     formula_form <- stringr::str_replace(j,"aic_","")
 
-    fit[[j]] <- glm(
-      as.formula(get(sprintf("form_%s", formula_form))),
-      data = dataUse,
-      family = familyUse
-    )
+    if(stack$regressionType[[i]] == "negbin"){
+      fit[[j]] <- MASS::glm.nb(
+        as.formula(get(sprintf("form_%s", formula_form))),
+        data = dataUse
+      )
+    } else {
+      fit[[j]] <- glm(
+        as.formula(get(sprintf("form_%s", formula_form))),
+        data = dataUse,
+        family = familyUse
+      )
+    }
   }
 
   if(RAWmisc::DetectSpline(stack$exposure[[i]])){

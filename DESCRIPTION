@@ -20,7 +20,8 @@ Imports:
   utils,
   processx,
   stats,
-  lmtest
+  lmtest,
+  MASS
 Suggests: testthat, rms
 License: GPL-3
 LazyData: true
