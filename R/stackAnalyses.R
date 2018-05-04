@@ -74,12 +74,13 @@ ExtractFits <- function(fit0, fit1, fit1aic) {
 #' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
 #' @param stack stack
 #' @param i i
+#' @param form the formula
 #' @param data data
 #' @importFrom stringr str_replace_all
 #' @importFrom stats model.frame coef vcov AIC
 #' @import data.table
 #' @export ExtractFitsSplines
-ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data){
+ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form){
   sp <- NULL
   eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
   dataNew0 <- data[1,]
@@ -88,7 +89,7 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data){
   dataNew1 <- data[1,]
   dataNew1[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
 
-  newFormula <- stringr::str_replace_all(Reduce(paste, deparse(fit1$formula))," ","")
+  newFormula <- stringr::str_replace_all(form," ","")
   newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
   newFormula <- stringr::str_replace_all(newFormula,"\\)&&",
                                          sprintf(",knots=%s,intercept=%s,Boundary.knots=%s\\)",
@@ -277,14 +278,16 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       fit1aic = fit[["aic_crude1"]],
       stack = stack,
       i = i,
-      data=dataCrude)
+      data=dataCrude,
+      form=form_crude1)
     res_adj <- RAWmisc::ExtractFitsSplines(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]],
       stack = stack,
       i = i,
-      data=dataAdj)
+      data=dataAdj,
+      form=form_adj1)
   } else {
     res_crude <- RAWmisc::ExtractFits(
       fit0 = fit[["crude0"]],

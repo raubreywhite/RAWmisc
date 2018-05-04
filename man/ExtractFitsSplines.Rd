@@ -5,7 +5,7 @@
 \title{ExtractFitsSplines
 Extract fits}
 \usage{
-ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data)
+ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data, form)
 }
 \arguments{
 \item{fit0}{The variable of interest}
@@ -19,6 +19,8 @@ ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data)
 \item{i}{i}
 
 \item{data}{data}
+
+\item{form}{the formula}
 }
 \description{
 ExtractFitsSplines
