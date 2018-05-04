@@ -192,7 +192,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     aicFamily <- analysisFamily <- poisson()
     expResults <- TRUE
   } else if(stack$regressionType[[i]] == "negbin"){
-
+    aicFamily <- analysisFamily <- NULL
     expResults <- TRUE
   }
 
