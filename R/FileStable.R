@@ -19,7 +19,7 @@ IsFileStable <- function(file=tempfile(), delay=5){
 #' @param fileDetails File that contains the details of things being checked
 #' @export IsFileChanged
 IsFileChanged <- function(fileToCheck=tempfile(), fileDetails=tempfile(), delay=5){
-  if(!file.exists(fileToCheck)) stop("file doesn't exist")
+  if(!file.exists(fileToCheck)) return(FALSE)
 
   lastMod <- file.info(fileToCheck)$mtime
 
