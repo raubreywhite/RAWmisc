@@ -46,7 +46,7 @@ test_that("simple spline", {
   expect_equal(round(a$c_b*10)/10,round(b$c_b*10)/10)
 })
 
-test_that("linear regression more complicated spline vs rms package", {
+test_that("linear regression more complicated spline vs rms package, point estimate", {
   library(rms)
   set.seed(4)
   x <- 1:100
@@ -58,7 +58,7 @@ test_that("linear regression more complicated spline vs rms package", {
   data <- data.frame(x,y,interaction)
   assign("data", data, envir=globalenv())
 
-  fit0 <- lm(y~splines::ns(x,df=2),data=data)
+  fit0 <- lm(y~splines::ns(x,df=4),data=data)
 
   ddist0 <- datadist(data)
   ddist0$limits[["x"]][2] <- 0 ##### SETTING REFERENCE VALUE FOR NEUROTICISM
@@ -79,7 +79,8 @@ test_that("linear regression more complicated spline vs rms package", {
   a <- RAWmisc::ProcessStack(stack=stack,i=1)
 
   b <- as.data.frame(summary(fit))
-  expect_equal(round(a$c_b),round(b$Effect))
+  expect_equal(c(round(a$c_b),round(a$c_se*10)/10),
+               c(round(b$Effect),round(b$S.E.*10)/10))
 })
 
 test_that("simple linear regression", {
@@ -173,16 +174,16 @@ test_that("simple negative binomial regression", {
 test_that("logistic regression more complicated spline vs rms package", {
   library(rms)
   set.seed(4)
-  x <- rep(1:1000,20)
+  x <- c(400:599)/1000
   interaction <- rep(c(0,1),50)
-  z <- -7 + 0.015*x
+  z <- -1 + 1.5*x
   pr <- 1/(1+exp(-z))         # pass through an inv-logit function
   y <- runif(length(pr)) < pr
 
   data <- data.frame(x,y,interaction)
   assign("data", data, envir=globalenv())
 
-  fit0 <- glm(y~splines::ns(x,df=2),data=data,family=binomial())
+  fit0 <- glm(y~splines::ns(x,df=4),data=data,family=binomial())
 
   ddist0 <- datadist(data)
   ddist0$limits[["x"]][2] <- 0 ##### SETTING REFERENCE VALUE FOR NEUROTICISM
@@ -203,7 +204,7 @@ test_that("logistic regression more complicated spline vs rms package", {
   a <- RAWmisc::ProcessStack(stack=stack,i=1)
 
   b <- as.data.frame(summary(fit))
-  expect_equal(round(a$c_b*1000)/1000,round(b$Effect*1000)/1000)
+  expect_equal(round(a$c_b*10)/10,round(b$Effect*10)/10)
 })
 
 
