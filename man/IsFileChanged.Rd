@@ -12,6 +12,8 @@ IsFileChanged(fileToCheck = tempfile(), fileDetails = tempfile(),
 \item{fileToCheck}{The file of interest}
 
 \item{fileDetails}{File that contains the details of things being checked}
+
+\item{delay}{Number of seconds between checking file size a second time}
 }
 \description{
 IsFileChanged

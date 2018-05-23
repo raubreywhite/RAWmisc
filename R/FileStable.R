@@ -17,6 +17,7 @@ IsFileStable <- function(file=tempfile(), delay=5){
 #' This determines if the file has been changed (checks modification times)
 #' @param fileToCheck The file of interest
 #' @param fileDetails File that contains the details of things being checked
+#' @param delay Number of seconds between checking file size a second time
 #' @export IsFileChanged
 IsFileChanged <- function(fileToCheck=tempfile(), fileDetails=tempfile(), delay=5){
   if(!file.exists(fileToCheck)) return(FALSE)
