@@ -183,7 +183,7 @@ ValidateStack <- function(stack,i=1) {
                  "graphTitleX"
                  )
   graphExists <- FALSE
-  for(j in graphVars) if(!is.NA(stack$graphFileName[[i]])) graphExists <- TRUE
+  for(j in graphVars) if(!is.na(stack$graphFileName[[i]])) graphExists <- TRUE
 
   if(graphExists){
     for(j in graphVars) if(is.null(stack[[j]][[i]])) return(FALSE)
