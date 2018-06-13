@@ -51,10 +51,11 @@ LRTest <- function(fit0, fit1) {
 #' @param fit0 The variable of interest
 #' @param fit1 The variable of interest
 #' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
+#' @param exposureValue exposureValue
 #' @import data.table
 #' @importFrom stats AIC
 #' @export ExtractFits
-ExtractFits <- function(fit0, fit1, fit1aic) {
+ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1) {
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame(coef(summary(fit1)))
   names(res) <- c("b", "se", "z", "p_wald")
@@ -62,6 +63,8 @@ ExtractFits <- function(fit0, fit1, fit1aic) {
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
+  res$b <- res$b*exposureValue
+  res$se <- res$se*exposureValue
   res$aic <- AIC(fit1aic)
   setDT(res)
   return(res)
@@ -76,18 +79,19 @@ ExtractFits <- function(fit0, fit1, fit1aic) {
 #' @param i i
 #' @param form the formula
 #' @param data data
+#' @param exposureValue exposureValue
 #' @importFrom stringr str_replace_all
 #' @importFrom stats model.frame coef vcov AIC
 #' @import data.table
 #' @export ExtractFitsSplines
-ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form){
+ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
   sp <- NULL
   eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
   dataNew0 <- data[1,]
   dataNew0[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
 
   dataNew1 <- data[1,]
-  dataNew1[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 1
+  dataNew1[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- exposureValue
 
   newFormula <- stringr::str_replace_all(form," ","")
   newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
@@ -136,7 +140,7 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form){
                     "se"=sqrt(newVar),
                     "z"=estDif/sqrt(newVar),
                     "p_wald" = RAWmisc::CalcPValue(beta=estDif,se=sqrt(newVar)))
-  res$exposure <- sprintf("0 to 1, %s",stack$exposure[[i]])
+  res$exposure <- sprintf("0 to %s, %s",exposureValue,stack$exposure[[i]])
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
@@ -155,6 +159,37 @@ CreateStackSkeleton <- function(n=1) {
   s$exposure <- NA
   s$confounders <- NA
   s$data <- NA
+  s$graphExposureScaleMultiply <- 1
+  s$graphExposureScaleAdd <- 1
+  s$graphReference <- 0
+  s$graphExposureLocations <- NA
+  s$graphFileName <- NA
+  s$graphTitleX <- NA
+
+  return(s)
+}
+
+#' ValidateStack
+#' This validates the skeleton analysis stack
+#' @param stack stack
+#' @param i The variable of interest
+#' @export ValidateStack
+ValidateStack <- function(stack,i=1) {
+  graphVars <- c("graphExposureScaleMultiply",
+                 "graphExposureScaleAdd",
+                 "graphReference",
+                 "graphExposureLocations",
+                 "graphFileName",
+                 "graphTitleX"
+                 )
+  graphExists <- FALSE
+  for(j in graphVars) if(!is.null(stack$graphFileName[[i]])) graphExists <- TRUE
+
+  if(graphExists){
+    for(j in graphVars) if(is.null(stack[[j]][[i]])) return(FALSE)
+    for(j in graphVars) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
+  }
+  return(TRUE)
 
   return(s)
 }
@@ -173,6 +208,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson","negbin")) {
     stop("Non-supported regression type")
   }
+  if(!ValidateStack(stack,i)) stop("Stack not validated")
 
   regressionType <- NULL
   outcome <- NULL
@@ -186,15 +222,19 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   if (stack$regressionType[[i]] == "logistic") {
     aicFamily <- analysisFamily <- binomial()
     expResults <- TRUE
+    graphTitleY <- "Odds ratio"
   } else if(stack$regressionType[[i]] == "linear"){
     aicFamily <- analysisFamily <- gaussian()
     expResults <- FALSE
+    graphTitleY <- "Effect estimate"
   } else if(stack$regressionType[[i]] == "poisson"){
     aicFamily <- analysisFamily <- poisson()
     expResults <- TRUE
+    graphTitleY <- "Incident rate ratio"
   } else if(stack$regressionType[[i]] == "negbin"){
     aicFamily <- analysisFamily <- NULL
     expResults <- TRUE
+    graphTitleY <- "Incident rate ratio"
   }
 
   form_crude0 <- sprintf(
@@ -272,7 +312,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   }
 
   if(RAWmisc::DetectSpline(stack$exposure[[i]])){
-    res_crude <- RAWmisc::ExtractFitsSplines(
+    res_crude <- ExtractFitsSplines(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
       fit1aic = fit[["aic_crude1"]],
@@ -280,7 +320,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       i = i,
       data=dataCrude,
       form=form_crude1)
-    res_adj <- RAWmisc::ExtractFitsSplines(
+    res_adj <- ExtractFitsSplines(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]],
@@ -289,11 +329,11 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       data=dataAdj,
       form=form_adj1)
   } else {
-    res_crude <- RAWmisc::ExtractFits(
+    res_crude <- ExtractFits(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
       fit1aic = fit[["aic_crude1"]])
-    res_adj <- RAWmisc::ExtractFits(
+    res_adj <- ExtractFits(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]])
@@ -306,6 +346,67 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
   res[, regressionType := stack$regressionType[[i]]]
   res[, outcome := stack$outcome[[i]]]
+
+  # graphing results
+  if(!is.na(stack$graphFileName[[i]])){
+    toGraph <- vector("list",length=length(stack$graphExposureLocations[[i]]))
+    for(j in 1:length(toGraph)){
+      ev <- stack$graphExposureLocations[[i]][j]
+      if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+        temp <- ExtractFitsSplines(
+          fit0 = fit[["adj0"]],
+          fit1 = fit[["adj1"]],
+          fit1aic = fit[["aic_adj1"]],
+          stack = stack,
+          i = i,
+          data=dataAdj,
+          form=form_adj1,
+          exposureValue = ev)
+      } else {
+        temp <- ExtractFits(
+          fit0 = fit[["adj0"]],
+          fit1 = fit[["adj1"]],
+          fit1aic = fit[["aic_adj1"]],
+          exposureValue = ev)
+      }
+      temp[,exposureValue:=ev]
+      toGraph[[j]] <- temp
+    }
+    toGraph <- rbindlist(toGraph)
+    ref <- toGraph[1]
+    ref$b <- 0
+    ref$se <- 0
+    ref$exposureValue <- stack$graphReference[[i]]
+
+    toGraph <- rbindlist(list(toGraph,ref))
+
+    toGraph[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
+
+    if(expResults){
+      toGraph[,l95:=exp(b-1.96*se)]
+      toGraph[,u95:=exp(b+1.96*se)]
+      toGraph[,b:=exp(b)]
+    } else {
+      toGraph[,l95:=b-1.96*se]
+      toGraph[,u95:=b+1.96*se]
+    }
+    toGraph[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
+
+    q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b,ymin=l95,ymax=u95))
+    if(expResults){
+      q <- q + geom_hline(yintercept = 1,col="red",lty=3)
+    } else {
+      q <- q + geom_hline(yintercept = 0,col="red",lty=3)
+    }
+    q <- q + geom_ribbon(alpha=0.4)
+    q <- q + geom_line()
+    q <- q + geom_point()
+    q <- q + geom_label(mapping=aes(label=est,y=u95),alpha=0.75)
+    q <- q + scale_x_continuous(stack$graphTitleX[[i]])
+    q <- q + scale_y_continuous(graphTitleY)
+    q <- q + theme_grey(base_size = 16)
+    saveA4(q,stack$graphFileName[[i]])
+  }
 
   if (formatResults) {
     res[, a_est := RAWmisc::FormatEstCIFromEstSE(beta = a_b, se = a_se, exp = expResults)]

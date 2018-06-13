@@ -15,8 +15,14 @@ test_that("simple spline", {
   stack$exposure <- "splines::ns(x,df=2)"
   stack$confounders <- list(c("interaction"))
   stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleX <- "test"
+  if(interactive()) stack$graphFileName <- "/git/test.png"
 
-  a <- RAWmisc::ProcessStack(stack=stack,i=1)
+  a <- ProcessStack(stack=stack,i=1)
 
   expect_equal(round(a$c_b*10)/10,2)
 })
