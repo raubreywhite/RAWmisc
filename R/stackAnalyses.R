@@ -369,7 +369,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
           exposureValue = ev)
       }
       temp[,exposureValue:=ev]
-      toGraph[[j]] <- temp
+      toGraph[[j]] <- temp[exposure==stack$exposure[[i]]]
     }
     toGraph <- rbindlist(toGraph)
     ref <- toGraph[1]
