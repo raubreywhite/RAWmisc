@@ -19,6 +19,7 @@ test_that("simple spline", {
   stack$graphExposureScaleAdd <- 5
   stack$graphReference <- 0
   stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
   stack$graphTitleX <- "test"
   if(interactive()) stack$graphFileName <- "/git/test.png"
 

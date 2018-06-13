@@ -164,6 +164,7 @@ CreateStackSkeleton <- function(n=1) {
   s$graphReference <- 0
   s$graphExposureLocations <- NA
   s$graphFileName <- NA
+  s$graphTitleMain <- NA
   s$graphTitleX <- NA
 
   return(s)
@@ -180,6 +181,7 @@ ValidateStack <- function(stack,i=1) {
                  "graphReference",
                  "graphExposureLocations",
                  "graphFileName",
+                 "graphTitleMain",
                  "graphTitleX"
                  )
   graphExists <- FALSE
@@ -380,6 +382,10 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     toGraph <- rbindlist(list(toGraph,ref))
 
     toGraph[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
+    #fixing ref to not have CIs
+    toGraph[exposureValue==stack$graphReference[[i]],
+            est:=sprintf("%s (ref)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
+
 
     if(expResults){
       toGraph[,l95:=exp(b-1.96*se)]
@@ -391,6 +397,9 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     }
     toGraph[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
 
+    xMin <- min(toGraph$exposureValueScaled)
+    xMax <- max(toGraph$exposureValueScaled)
+    dif <- xMax-xMin
     q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b,ymin=l95,ymax=u95))
     if(expResults){
       q <- q + geom_hline(yintercept = 1,col="red",lty=3)
@@ -400,9 +409,11 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     q <- q + geom_ribbon(alpha=0.4)
     q <- q + geom_line()
     q <- q + geom_point()
-    q <- q + geom_label(mapping=aes(label=est,y=u95),alpha=0.75)
+    q <- q + geom_label(mapping=aes(label=est),alpha=0.75)
     q <- q + scale_x_continuous(stack$graphTitleX[[i]])
     q <- q + scale_y_continuous(graphTitleY)
+    q <- q + expand_limits(x=c(xMin-dif*0.10,xMax+dif*0.10))
+    q <- q + labs(title=stack$graphTitleMain[[i]])
     q <- q + theme_grey(base_size = 16)
     saveA4(q,stack$graphFileName[[i]])
   }
