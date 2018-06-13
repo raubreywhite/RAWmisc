@@ -199,7 +199,7 @@ ValidateStack <- function(stack,i=1) {
 #' @param formatResults do you want the results formatted?
 #' @importFrom stats glm binomial gaussian poisson coef as.formula
 #' @importFrom MASS glm.nb
-#' @importFrom stringr str_split str_replace
+#' @importFrom stringr str_split str_replace str_detect fixed
 #' @import ggplot2
 #' @import data.table
 #' @export ProcessStack
@@ -369,7 +369,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
           exposureValue = ev)
       }
       temp[,exposureValue:=ev]
-      toGraph[[j]] <- temp[exposure==stack$exposure[[i]]]
+      toGraph[[j]] <- temp[stringr::str_detect(exposure,stringr::fixed(stack$exposure[[i]]))]
     }
     toGraph <- rbindlist(toGraph)
     ref <- toGraph[1]
