@@ -183,15 +183,13 @@ ValidateStack <- function(stack,i=1) {
                  "graphTitleX"
                  )
   graphExists <- FALSE
-  for(j in graphVars) if(!is.null(stack$graphFileName[[i]])) graphExists <- TRUE
+  for(j in graphVars) if(!is.NA(stack$graphFileName[[i]])) graphExists <- TRUE
 
   if(graphExists){
     for(j in graphVars) if(is.null(stack[[j]][[i]])) return(FALSE)
     for(j in graphVars) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
   }
   return(TRUE)
-
-  return(s)
 }
 
 #' ProcessStack
@@ -202,6 +200,7 @@ ValidateStack <- function(stack,i=1) {
 #' @importFrom stats glm binomial gaussian poisson coef as.formula
 #' @importFrom MASS glm.nb
 #' @importFrom stringr str_split str_replace
+#' @import ggplot2
 #' @import data.table
 #' @export ProcessStack
 ProcessStack <- function(stack, i, formatResults=FALSE) {
