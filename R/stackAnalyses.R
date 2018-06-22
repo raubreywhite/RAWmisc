@@ -445,8 +445,10 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     }
     q <- q + geom_ribbon(alpha=0.4,mapping=aes(ymin=l95,ymax=u95))
     q <- q + geom_line()
-    q <- q + geom_point()
-    if(!is.null(toGraphLabels)) q <- q + geom_text(data=toGraphLabels,mapping=aes(label=est),alpha=0.75,angle=90,hjust=-0.1)
+    if(!is.null(toGraphLabels)){
+      q <- q + geom_point(data=toGraphLabels)
+      q <- q + geom_text(data=toGraphLabels,mapping=aes(label=est),alpha=0.75,angle=90,hjust=-0.1)
+    }
     q <- q + scale_x_continuous(stack$graphTitleX[[i]])
     q <- q + scale_y_continuous(graphTitleY)
     q <- q + expand_limits(x=c(xMin-dif*0.10,xMax+dif*0.10))
