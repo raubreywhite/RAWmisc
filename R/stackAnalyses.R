@@ -427,6 +427,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       toGraph[,l95:=exp(b-1.96*se)]
       toGraph[,u95:=exp(b+1.96*se)]
       toGraph[,b:=exp(b)]
+      if(!is.null(toGraphLabels)) toGraphLabels[,b:=exp(b)]
     } else {
       toGraph[,l95:=b-1.96*se]
       toGraph[,u95:=b+1.96*se]
