@@ -18,6 +18,35 @@ test_that("simple spline", {
   stack$graphExposureScaleMultiply <- 2
   stack$graphExposureScaleAdd <- 5
   stack$graphReference <- 0
+  stack$graphExposureLocationsLabels <- list(c(0.1,0.5,1))
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
+  stack$graphTitleX <- "test"
+  if(interactive()) stack$graphFileName <- "/git/test.png"
+
+  a <- ProcessStack(stack=stack,i=1)
+
+  expect_equal(round(a$c_b*10)/10,2)
+})
+
+test_that("simple spline no labels", {
+  set.seed(4)
+  x <- 1:100
+  interaction <- rep(c(0,1),50)
+  y <- x*2+rnorm(100)
+
+  data <- data.frame(x,y,interaction)
+  assign("data", data, envir=globalenv())
+
+  stack <- RAWmisc::CreateStackSkeleton(n=length(1))
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "splines::ns(x,df=2)"
+  stack$confounders <- list(c("interaction"))
+  stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
   stack$graphExposureLocations <- list(c(0.1,0.5,1))
   stack$graphTitleMain <- "title"
   stack$graphTitleX <- "test"

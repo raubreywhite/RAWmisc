@@ -163,6 +163,7 @@ CreateStackSkeleton <- function(n=1) {
   s$graphExposureScaleAdd <- 1
   s$graphReference <- 0
   s$graphExposureLocations <- NA
+  s$graphExposureLocationsLabels <- NA
   s$graphFileName <- NA
   s$graphTitleMain <- NA
   s$graphTitleX <- NA
@@ -350,6 +351,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
   # graphing results
   if(!is.na(stack$graphFileName[[i]])){
+    #### TO GRAPH
     toGraph <- vector("list",length=length(stack$graphExposureLocations[[i]]))
     for(j in 1:length(toGraph)){
       ev <- stack$graphExposureLocations[[i]][j]
@@ -381,11 +383,45 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
     toGraph <- rbindlist(list(toGraph,ref))
 
-    toGraph[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
-    #fixing ref to not have CIs
-    toGraph[exposureValue==stack$graphReference[[i]],
-            est:=sprintf("%s (ref)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
+    #### TO GRAPH LABELS
+    toGraphLabels <- NULL
+    if(!is.na(stack$graphExposureLocationsLabels[[i]][1])){
+      toGraphLabels <- vector("list",length=length(stack$graphExposureLocationsLabels[[i]]))
+      for(j in 1:length(toGraphLabels)){
+        ev <- stack$graphExposureLocationsLabels[[i]][j]
+        if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+          temp <- ExtractFitsSplines(
+            fit0 = fit[["adj0"]],
+            fit1 = fit[["adj1"]],
+            fit1aic = fit[["aic_adj1"]],
+            stack = stack,
+            i = i,
+            data=dataAdj,
+            form=form_adj1,
+            exposureValue = ev)
+        } else {
+          temp <- ExtractFits(
+            fit0 = fit[["adj0"]],
+            fit1 = fit[["adj1"]],
+            fit1aic = fit[["aic_adj1"]],
+            exposureValue = ev)
+        }
+        temp[,exposureValue:=ev]
+        toGraphLabels[[j]] <- temp[stringr::str_detect(exposure,stringr::fixed(stack$exposure[[i]]))]
+      }
+      toGraphLabels <- rbindlist(toGraphLabels)
+      ref <- toGraphLabels[1]
+      ref$b <- 0
+      ref$se <- 0
+      ref$exposureValue <- stack$graphReference[[i]]
 
+      toGraphLabels <- rbindlist(list(toGraphLabels,ref))
+      toGraphLabels[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
+      #fixing ref to not have CIs
+      toGraphLabels[exposureValue==stack$graphReference[[i]],
+              est:=sprintf("%s (ref)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
+    }
+    #### END
 
     if(expResults){
       toGraph[,l95:=exp(b-1.96*se)]
@@ -396,20 +432,21 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       toGraph[,u95:=b+1.96*se]
     }
     toGraph[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
+    if(!is.null(toGraphLabels)) toGraphLabels[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
 
     xMin <- min(toGraph$exposureValueScaled)
     xMax <- max(toGraph$exposureValueScaled)
     dif <- xMax-xMin
-    q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b,ymin=l95,ymax=u95))
+    q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b))
     if(expResults){
       q <- q + geom_hline(yintercept = 1,col="red",lty=3)
     } else {
       q <- q + geom_hline(yintercept = 0,col="red",lty=3)
     }
-    q <- q + geom_ribbon(alpha=0.4)
+    q <- q + geom_ribbon(alpha=0.4,mapping=aes(ymin=l95,ymax=u95))
     q <- q + geom_line()
     q <- q + geom_point()
-    q <- q + geom_label(mapping=aes(label=est),alpha=0.75)
+    if(!is.null(toGraphLabels)) q <- q + geom_text(data=toGraphLabels,mapping=aes(label=est),alpha=0.75,angle=90,hjust=-0.1)
     q <- q + scale_x_continuous(stack$graphTitleX[[i]])
     q <- q + scale_y_continuous(graphTitleY)
     q <- q + expand_limits(x=c(xMin-dif*0.10,xMax+dif*0.10))
