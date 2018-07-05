@@ -232,11 +232,11 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   } else if(stack$regressionType[[i]] == "poisson"){
     aicFamily <- analysisFamily <- poisson()
     expResults <- TRUE
-    graphTitleY <- "Incident rate ratio"
+    graphTitleY <- "Incidence rate ratio"
   } else if(stack$regressionType[[i]] == "negbin"){
     aicFamily <- analysisFamily <- NULL
     expResults <- TRUE
-    graphTitleY <- "Incident rate ratio"
+    graphTitleY <- "Incidence rate ratio"
   }
 
   form_crude0 <- sprintf(
@@ -419,7 +419,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       toGraphLabels[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
       #fixing ref to not have CIs
       toGraphLabels[exposureValue==stack$graphReference[[i]],
-              est:=sprintf("%s (ref)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
+              est:=sprintf("%s (reference)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
     }
     #### END
 
@@ -440,15 +440,20 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     dif <- xMax-xMin
     q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b))
     if(expResults){
-      q <- q + geom_hline(yintercept = 1,col="red",lty=3)
+      q <- q + geom_hline(yintercept = 1,col="black",lty=2)
     } else {
-      q <- q + geom_hline(yintercept = 0,col="red",lty=3)
+      q <- q + geom_hline(yintercept = 0,col="black",lty=2)
     }
     q <- q + geom_ribbon(alpha=0.4,mapping=aes(ymin=l95,ymax=u95))
     q <- q + geom_line()
     if(!is.null(toGraphLabels)){
       q <- q + geom_point(data=toGraphLabels)
-      q <- q + geom_text(data=toGraphLabels,mapping=aes(label=est),alpha=0.75,angle=90,hjust=-0.1)
+      q <- q + geom_text(data=toGraphLabels,
+                         mapping=aes(label=est),
+                         alpha=1,
+                         angle=90,
+                         hjust=-0.1,
+                         size=(5/14) * 16)
     }
     q <- q + scale_x_continuous(stack$graphTitleX[[i]])
     q <- q + scale_y_continuous(graphTitleY)
