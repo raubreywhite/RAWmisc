@@ -67,7 +67,10 @@ AllowFileManipulationFromInitialiseProject <- function(){
 #' on your system
 #' @export UseRClone
 UseRClone <- function(){
-  if(dir.exists("/home/xrstudio/.config") & !dir.exists("/home/rstudio/.config")) file.copy("/home/xrstudio/.config","/home/rstudio/",recursive = T)
+  if(dir.exists("/home/xrstudio/.config/rclone")){
+    if(!dir.exists("/home/rstudio/.config")) dir.create("/home/rstudio/.config")
+    if(!dir.exists("/home/rstudio/.config/rclone")) file.copy("/home/xrstudio/.config/rclone","/home/rstudio/.config/",recursive = T)
+  }
   if(file.exists("/home/rstudio/.config/rclone/rclone.conf")) CONFIG$USE_RCLONE <- TRUE
 }
 
