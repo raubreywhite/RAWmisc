@@ -20,7 +20,7 @@ MakeFootnote <- function(
   grid::popViewport()
 }
 
-#' Makes a footnote on the bottom right hand corner
+#' Makes a footnote on the bottom right hand corner when using gridExtra::grid.arrange
 #' @param footnoteText a
 #' @param size a
 #' @param color a

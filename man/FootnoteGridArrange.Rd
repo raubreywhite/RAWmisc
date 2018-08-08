@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot.r
 \name{FootnoteGridArrange}
 \alias{FootnoteGridArrange}
-\title{Makes a footnote on the bottom right hand corner}
+\title{Makes a footnote on the bottom right hand corner when using gridExtra::grid.arrange}
 \usage{
 FootnoteGridArrange(footnoteText = strftime(Sys.time(), format =
   "\%d/\%m/\%Y"), size = 1.2, color = "black")
@@ -15,5 +15,5 @@ FootnoteGridArrange(footnoteText = strftime(Sys.time(), format =
 \item{color}{a}
 }
 \description{
-Makes a footnote on the bottom right hand corner
+Makes a footnote on the bottom right hand corner when using gridExtra::grid.arrange
 }
