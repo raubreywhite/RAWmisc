@@ -7,6 +7,24 @@ Year <- function(date=lubridate::today()){
   return(yr)
 }
 
+#' YearC
+#' @param date The date of interest
+#' @importFrom lubridate today
+#' @export YearC
+YearC <- function(date=lubridate::today()){
+  yr <- format.Date(date,"%G")
+  return(yr)
+}
+
+#' YearN
+#' @param date The date of interest
+#' @importFrom lubridate today
+#' @export YearN
+YearN <- function(date=lubridate::today()){
+  yr <- as.numeric(format.Date(date,"%G"))
+  return(yr)
+}
+
 #' WeekC
 #' @param date The date of interest
 #' @importFrom lubridate today
