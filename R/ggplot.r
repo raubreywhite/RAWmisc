@@ -9,15 +9,33 @@ MakeFootnote <- function(
   footnoteText = strftime(Sys.time(), format="%d/%m/%Y"),
   size = 1.2,
   color = "black"
-  ){
+){
 
   grid::pushViewport(grid::viewport())
   grid::grid.text(label = footnoteText ,
-    x = grid::unit(1,"npc") - grid::unit(2, "mm"),
-    y = grid::unit(2, "mm"),
-    just = c("right", "bottom"),
-    gp = grid::gpar(cex = size, col = color))
+                  x = grid::unit(1,"npc") - grid::unit(2, "mm"),
+                  y = grid::unit(2, "mm"),
+                  just = c("right", "bottom"),
+                  gp = grid::gpar(cex = size, col = color))
   grid::popViewport()
+}
+
+#' Makes a footnote on the bottom right hand corner
+#' @param footnoteText a
+#' @param size a
+#' @param color a
+#' @export FootnoteGridArrange
+FootnoteGridArrange <- function(
+  footnoteText = strftime(Sys.time(), format="%d/%m/%Y"),
+  size = 1.2,
+  color = "black"
+){
+  grid::textGrob(
+    footnoteText,
+    gp = grid::gpar(cex = size),
+    hjust = 1,
+    x = 1
+  )
 }
 
 #' Creates png with default dimensions of A4
