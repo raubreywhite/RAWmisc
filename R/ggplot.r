@@ -90,6 +90,10 @@ theme_gray <- function(base_size=24, base_family=""){
 #' @importFrom ggplot2 ggsave
 #' @export saveA4
 saveA4 <- function(q,filename,landscape=T){
-  ggsave(filename,plot=q,width=297,height=210, units="mm")
+  if(landscape){
+    ggsave(filename,plot=q,width=297,height=210, units="mm")
+  } else {
+    ggsave(filename,plot=q,width=210,height=297, units="mm")
+  }
 }
 
