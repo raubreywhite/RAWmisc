@@ -43,6 +43,7 @@ test_that("using scale, matrix", {
   set.seed(4)
   d1 <- data.frame("a"=rnorm(10000),"b"=rnorm(10000)*2+1)
   d2 <- as.matrix(data.frame("a"=rnorm(10000)+1,"b"=rnorm(10000)*2+1))
+  dimnames(d2) <- NULL
 
   s <- ScaleCreate(d1)
 

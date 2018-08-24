@@ -1,5 +1,6 @@
 #' Creates a scale
 #' @param d a
+#' @importFrom stats mean sd
 #' @export ScaleCreate
 ScaleCreate <- function(d){
   means <- apply(d,2,mean,na.rm=T)
@@ -17,6 +18,7 @@ ScaleCreate <- function(d){
 #' Applies as scale
 #' @param d a data frame
 #' @param s scale
+#' @import data.table
 #' @export ScaleApply
 ScaleApply <- function(d,s){
   if(!"Scale" %in% class(s)) stop("s is not a Scale")
