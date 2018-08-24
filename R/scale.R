@@ -1,6 +1,6 @@
 #' Creates a scale
 #' @param d a
-#' @importFrom stats mean sd
+#' @importFrom stats sd
 #' @export ScaleCreate
 ScaleCreate <- function(d){
   means <- apply(d,2,mean,na.rm=T)
