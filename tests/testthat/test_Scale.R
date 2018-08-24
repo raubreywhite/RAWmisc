@@ -25,7 +25,7 @@ test_that("using scale, data.table", {
 
   s <- ScaleCreate(d1)
 
-  expect_equal(round(apply(ScaleApply(d2,s),2,mean)),c(1,0))
+  expect_equal(as.numeric(round(apply(ScaleApply(d2,s),2,mean))),c(1,0))
 })
 
 
@@ -36,7 +36,7 @@ test_that("using scale, data.frame", {
 
   s <- ScaleCreate(d1)
 
-  expect_equal(round(apply(ScaleApply(d2,s),2,mean)),c(1,0))
+  expect_equal(as.numeric(round(apply(ScaleApply(d2,s),2,mean))),c(1,0))
 })
 
 test_that("using scale, matrix", {
