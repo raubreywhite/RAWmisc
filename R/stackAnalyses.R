@@ -154,8 +154,7 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @param n The variable of interest
 #' @export CreateStackSkeleton
 CreateStackSkeleton <- function(n=1) {
-  s <- data.frame(analysisID = rep(NA, n))
-  for(i in 1:n) s$analysisID[i] <- uuid::UUIDgenerate()
+  s <- data.frame(analysisID = UUID(n))
   s$regressionType <- rep(NA, n)
   s$outcome <- NA
   s$exposure <- NA
@@ -209,7 +208,6 @@ CopyStack <- function(stackFrom,stackNew,i=1,j=1) {
 #' @param stack stack
 #' @param i The variable of interest
 #' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
-#' @importFrom uuid UUIDgenerate
 #' @export ExpandStack.int
 ExpandStack.int <- function(stack,i=1, newAnalysisID=FALSE) {
   stackNew <- RAWmisc::CreateStackSkeleton(n=length(stack$confounders[[i]])+1)
@@ -224,7 +222,7 @@ ExpandStack.int <- function(stack,i=1, newAnalysisID=FALSE) {
     for(k in CONFIG_STACK$GRAPH_VARS) stackNew[[k]][[j]] <- NA
   }
 
-  if(newAnalysisID) stackNew$analysisID <- uuid::UUIDgenerate()
+  if(newAnalysisID) stackNew$analysisID <- UUID()
 
   return(stackNew)
 }
