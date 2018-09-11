@@ -338,5 +338,5 @@ test_that("expand stack and process", {
   a <- RAWmisc::ProcessStack(stack=stackExpanded,i=1)
   b <- RAWmisc::ProcessStack(stack=stack,i=1)
 
-  expect_equal(a[,-1],b[,-1])
+  expect_equal(a,b)
 })
