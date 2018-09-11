@@ -211,7 +211,7 @@ CopyStack <- function(stackFrom,stackNew,i=1,j=1) {
 #' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
 #' @importFrom uuid UUIDgenerate
 #' @export ExpandStack.int
-ExpandStack.int <- function(stack,i=1, newAnalysisID=TRUE) {
+ExpandStack.int <- function(stack,i=1, newAnalysisID=FALSE) {
   stackNew <- RAWmisc::CreateStackSkeleton(n=length(stack$confounders[[i]])+1)
 
 
@@ -232,8 +232,9 @@ ExpandStack.int <- function(stack,i=1, newAnalysisID=TRUE) {
 #' ExpandStack
 #' This validates the skeleton analysis stack
 #' @param stack stack
+#' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
 #' @export ExpandStack
-ExpandStack <- function(stack) {
+ExpandStack <- function(stack, newAnalysisID=FALSE) {
   stackFinal <- RAWmisc::CreateStackSkeleton(n=length(unlist(stack$confounders))+length(unlist(stack$exposure)))
   index <- 1
   for(j in 1:nrow(stack)){

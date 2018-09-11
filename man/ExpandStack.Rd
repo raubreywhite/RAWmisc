@@ -5,10 +5,12 @@
 \title{ExpandStack
 This validates the skeleton analysis stack}
 \usage{
-ExpandStack(stack)
+ExpandStack(stack, newAnalysisID = FALSE)
 }
 \arguments{
 \item{stack}{stack}
+
+\item{newAnalysisID}{If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)}
 }
 \description{
 ExpandStack

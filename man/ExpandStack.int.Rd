@@ -5,7 +5,7 @@
 \title{ExpandStack.int
 This validates the skeleton analysis stack}
 \usage{
-ExpandStack.int(stack, i = 1, newAnalysisID = TRUE)
+ExpandStack.int(stack, i = 1, newAnalysisID = FALSE)
 }
 \arguments{
 \item{stack}{stack}
