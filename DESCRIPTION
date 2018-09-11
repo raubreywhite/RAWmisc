@@ -21,7 +21,8 @@ Imports:
   processx,
   stats,
   lmtest,
-  MASS
+  MASS,
+  uuid
 Suggests: testthat, rms
 License: GPL-3
 LazyData: true

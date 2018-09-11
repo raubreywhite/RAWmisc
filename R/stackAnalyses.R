@@ -154,7 +154,9 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @param n The variable of interest
 #' @export CreateStackSkeleton
 CreateStackSkeleton <- function(n=1) {
-  s <- data.frame("regressionType" = rep(NA, n))
+  s <- data.frame(analysisID = rep(NA, n))
+  for(i in 1:n) s$analysisID[i] <- uuid::UUIDgenerate()
+  s$regressionType <- rep(NA, n)
   s$outcome <- NA
   s$exposure <- NA
   s$confounders <- NA
@@ -177,22 +179,72 @@ CreateStackSkeleton <- function(n=1) {
 #' @param i The variable of interest
 #' @export ValidateStack
 ValidateStack <- function(stack,i=1) {
-  graphVars <- c("graphExposureScaleMultiply",
-                 "graphExposureScaleAdd",
-                 "graphReference",
-                 "graphExposureLocations",
-                 "graphFileName",
-                 "graphTitleMain",
-                 "graphTitleX"
-                 )
   graphExists <- FALSE
-  for(j in graphVars) if(!is.na(stack$graphFileName[[i]])) graphExists <- TRUE
+  for(j in CONFIG_STACK$GRAPH_VARS) if(!is.na(stack$graphFileName[[i]])) graphExists <- TRUE
 
   if(graphExists){
-    for(j in graphVars) if(is.null(stack[[j]][[i]])) return(FALSE)
-    for(j in graphVars) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
+    for(j in CONFIG_STACK$GRAPH_VARS) if(is.null(stack[[j]][[i]])) return(FALSE)
+    for(j in CONFIG_STACK$GRAPH_VARS) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
   }
   return(TRUE)
+}
+
+#' CopyStack
+#' This validates the skeleton analysis stack
+#' @param stackFrom stackFrom
+#' @param stackNew stackNew
+#' @param i index stackFrom
+#' @param j index stackNew
+#' @export CopyStack
+CopyStack <- function(stackFrom,stackNew,i=1,j=1) {
+  for(n in names(stackFrom)){
+    stackNew[[n]][j] <- stackFrom[[n]][i]
+  }
+
+  return(stackNew)
+}
+
+#' ExpandStack.int
+#' This validates the skeleton analysis stack
+#' @param stack stack
+#' @param i The variable of interest
+#' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
+#' @importFrom uuid UUIDgenerate
+#' @export ExpandStack.int
+ExpandStack.int <- function(stack,i=1, newAnalysisID=TRUE) {
+  stackNew <- RAWmisc::CreateStackSkeleton(n=length(stack$confounders[[i]])+1)
+
+
+  for(j in 1:nrow(stackNew)){
+    stackNew <- CopyStack(stackFrom=stack, stackNew=stackNew, i=i, j=j)
+    allVars <- c(stack$exposure[[i]],stack$confounders[[i]])
+    stackNew$exposure[[j]] <- allVars[j]
+    stackNew$confounders[[j]] <- allVars[-j]
+
+    for(k in CONFIG_STACK$GRAPH_VARS) stackNew[[k]][[j]] <- NA
+  }
+
+  if(newAnalysisID) stackNew$analysisID <- uuid::UUIDgenerate()
+
+  return(stackNew)
+}
+
+#' ExpandStack
+#' This validates the skeleton analysis stack
+#' @param stack stack
+#' @export ExpandStack
+ExpandStack <- function(stack) {
+  stackFinal <- RAWmisc::CreateStackSkeleton(n=length(unlist(stack$confounders))+length(unlist(stack$exposure)))
+  index <- 1
+  for(j in 1:nrow(stack)){
+    stackExpanded <- ExpandStack.int(stack,j)
+    for(k in 1:nrow(stackExpanded)){
+      stackFinal <- CopyStack(stackFrom=stackExpanded, stackNew = stackFinal,i=k,j=index)
+      index <- index + 1
+    }
+  }
+
+  return(stackFinal)
 }
 
 #' ProcessStack
@@ -346,6 +398,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
 
   res <- merge(res_crude, res_adj, by = "exposure")
 
+  res[,analysisID := stack$analysisID[[i]]]
   res[, regressionType := stack$regressionType[[i]]]
   res[, outcome := stack$outcome[[i]]]
 
@@ -463,11 +516,15 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     saveA4(q,stack$graphFileName[[i]])
   }
 
+
+
+
   if (formatResults) {
     res[, a_est := RAWmisc::FormatEstCIFromEstSE(beta = a_b, se = a_se, exp = expResults)]
     res[, c_est := RAWmisc::FormatEstCIFromEstSE(beta = c_b, se = c_se, exp = expResults)]
 
     res <- res[res$exposure != "(Intercept)", c(
+      "analysisID",
       "regressionType",
       "outcome",
       "exposure",
@@ -484,6 +541,7 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     )]
   } else {
     res <- res[res$exposure != "(Intercept)", c(
+      "analysisID",
       "regressionType",
       "outcome",
       "exposure",
@@ -563,6 +621,7 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
     retval[, a_pbonf := RAWmisc::FormatPValue(a_pbonf)]
 
     varOrder <- c(
+      "analysisID",
       "regressionType",
       "outcome",
       "exposure",
@@ -581,6 +640,7 @@ FormatResultsStack <- function(results, bonf, useWald, useLRT) {
     )
   } else {
     varOrder <- c(
+      "analysisID",
       "regressionType",
       "outcome",
       "exposure",

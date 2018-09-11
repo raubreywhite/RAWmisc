@@ -19,3 +19,14 @@ NORCHAR$oe <- "\u00F8"
 NORCHAR$AE <- "\u00C6"
 NORCHAR$ae <- "\u00E6"
 
+#' BLAH
+#' @export CONFIG_STACK
+CONFIG_STACK <- new.env(parent = emptyenv())
+CONFIG_STACK$GRAPH_VARS <- c("graphExposureScaleMultiply",
+               "graphExposureScaleAdd",
+               "graphReference",
+               "graphExposureLocations",
+               "graphFileName",
+               "graphTitleMain",
+               "graphTitleX"
+               )

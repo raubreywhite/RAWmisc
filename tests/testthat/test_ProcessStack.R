@@ -244,3 +244,99 @@ test_that("logistic regression more complicated spline vs rms package", {
 })
 
 
+test_that("expand stack", {
+  set.seed(4)
+  x1 <- 1:100
+  x2 <- 100:1
+  x3 <- runif(100)
+  interaction <- rep(c(0,1),50)
+  y <- x1*1+x2*2+rnorm(100)
+
+  data <- data.frame(x1,x2,x3,y,interaction)
+  assign("data", data, envir=globalenv())
+
+  stack <- RAWmisc::CreateStackSkeleton(n=length(1))
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "x1"
+  stack$confounders <- list(c("x2","x3"))
+  stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
+  stack$graphExposureLocationsLabels <- list(c(0.1,0.5,1))
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
+  stack$graphTitleX <- "test"
+  if(interactive()) stack$graphFileName <- "/git/test.png"
+
+  a <- ExpandStack(stack=stack)
+
+  expect_equal(a$exposure,c("x1","x2","x3"))
+})
+
+
+
+test_that("expand stack x2", {
+  set.seed(4)
+  x1 <- 1:100
+  x2 <- 100:1
+  x3 <- runif(100)
+  interaction <- rep(c(0,1),50)
+  y <- x1*1+x2*2+rnorm(100)
+
+  data <- data.frame(x1,x2,x3,y,interaction)
+  assign("data", data, envir=globalenv())
+
+  stack <- RAWmisc::CreateStackSkeleton(n=2)
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "x1"
+  stack$confounders <- list(c("x2","x3"))
+  stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
+  stack$graphExposureLocationsLabels <- list(c(0.1,0.5,1))
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
+  stack$graphTitleX <- "test"
+  if(interactive()) stack$graphFileName <- "/git/test.png"
+
+  a <- ExpandStack(stack=stack)
+
+  expect_equal(a$exposure,c("x1","x2","x3","x1","x2","x3"))
+})
+
+test_that("expand stack and process", {
+  set.seed(4)
+  x1 <- 1:100
+  x2 <- 100:1
+  x3 <- runif(100)
+  interaction <- rep(c(0,1),50)
+  y <- x1*1+x2*2+rnorm(100)
+
+  data <- data.frame(x1,x2,x3,y,interaction)
+  assign("data", data, envir=globalenv())
+
+  stack <- RAWmisc::CreateStackSkeleton(n=length(1))
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "x1"
+  stack$confounders <- list(c("x2","x3"))
+  stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
+  stack$graphExposureLocationsLabels <- list(c(0.1,0.5,1))
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
+  stack$graphTitleX <- "test"
+  if(interactive()) stack$graphFileName <- "/git/test.png"
+
+  stackExpanded <- ExpandStack(stack=stack)
+  a <- RAWmisc::ProcessStack(stack=stackExpanded,i=1)
+  b <- RAWmisc::ProcessStack(stack=stack,i=1)
+
+  expect_equal(a[,-1],b[,-1])
+})
