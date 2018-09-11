@@ -154,7 +154,7 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @param n The variable of interest
 #' @export CreateStackSkeleton
 CreateStackSkeleton <- function(n=1) {
-  s <- data.frame(analysisID = UUID(n))
+  s <- data.frame(analysisID = UUID(n),stringsAsFactors = F)
   s$regressionType <- rep(NA, n)
   s$outcome <- NA
   s$exposure <- NA
