@@ -86,7 +86,7 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1) {
 #' @export ExtractFitsSplines
 ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
   sp <- NULL
-  eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure)))
+  eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure[[i]])))
   dataNew0 <- data[1,]
   dataNew0[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
 
