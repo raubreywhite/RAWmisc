@@ -5,5 +5,10 @@
 #' @importFrom stringr str_sub
 #' @export UUID
 UUID <- function(n=1) {
-  return(replicate(n,stringr::str_sub(uuid::UUIDgenerate(),1,CONFIG$UUID_DIGITS)))
+  width <- ceiling(log10(n))
+  padding <- formatC(1:n,width=width,flag='0')
+  uuids <- replicate(n,stringr::str_sub(uuid::UUIDgenerate(),1,CONFIG$UUID_DIGITS))
+
+  retval <- sprintf("%s-%s",padding,uuids)
+  return(retval)
 }
