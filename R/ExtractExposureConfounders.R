@@ -1,6 +1,31 @@
+#' Detect interaction
+#' @param var The results
+#' @importFrom stringr str_detect str_remove
+#' @export IsInteraction
+IsInteraction <- function(var){
+  varx <- stringr::str_remove(var,"::")
+  return(stringr::str_detect(varx,":"))
+}
+
+#' Detect interaction
+#' @param var The results
+#' @importFrom stringr str_detect str_remove
+#' @export DetectInteraction
+DetectInteraction <- function(var){
+  if(length(var)==0) return(FALSE)
+  retval <- FALSE
+  for(j in var){
+    jx <- stringr::str_remove(j,"::")
+    if(!is.na(jx)) if(stringr::str_detect(jx,":")) retval <- TRUE
+  }
+  # detect if interaction
+  return(retval)
+}
+
 #' Detect spline
 #' Transforms cos and sin to amplitude peak and trough
 #' @param var The results
+#' @importFrom stringr str_detect
 #' @export DetectSpline
 DetectSpline <- function(var){
   if(length(var)==0) return(FALSE)

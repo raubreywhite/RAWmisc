@@ -80,13 +80,17 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1) {
 #' @param form the formula
 #' @param data data
 #' @param exposureValue exposureValue
-#' @importFrom stringr str_replace_all
+#' @importFrom stringr str_replace_all str_extract
 #' @importFrom stats model.frame coef vcov AIC
+#' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplines
 ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+
+  splineExposure <- stringr::str_extract(stack$exposure[[i]],"ns(\\([a-zA-Z0-9_,=]*\\))")
   sp <- NULL
-  eval(parse(text=sprintf("sp <- with(data,%s)",stack$exposure[[i]])))
+  eval(parse(text=sprintf("sp <- with(data,splines::%s)",splineExposure)))
+
   dataNew0 <- data[1,]
   dataNew0[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
 
@@ -149,6 +153,36 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
   return(res)
 }
 
+#' ExtractFitsSplines
+#' Extract fits
+#' @param fit0 The variable of interest
+#' @param fit1 The variable of interest
+#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
+#' @param stack stack
+#' @param i i
+#' @param form the formula
+#' @param data data
+#' @param exposureValue exposureValue
+#' @importFrom stringr str_replace_all str_extract
+#' @importFrom stats model.frame coef vcov AIC
+#' @importFrom splines ns
+#' @import data.table
+#' @export ExtractFitsSplinesInteractions
+ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+  p_lrt <- RAWmisc::LRTest(fit0, fit1)
+  res <- data.frame("b"=NA,
+                    "se"=NA,
+                    "z"=NA,
+                    "p_wald" = NA)
+  res$exposure <- sprintf("0 to %s, %s",exposureValue,stack$exposure[[i]])
+  res$n <- sum(!is.na(fit1$fitted.values))
+  res$p_lrt <- p_lrt
+  res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
+  res$aic <- AIC(fit1aic)
+  setDT(res)
+  return(res)
+}
+
 #' CreateStackSkeleton
 #' This creates the skeleton analysis stack
 #' @param n The variable of interest
@@ -176,6 +210,7 @@ CreateStackSkeleton <- function(n=1) {
 #' This validates the skeleton analysis stack
 #' @param stack stack
 #' @param i The variable of interest
+#' @importFrom stringr str_detect fixed
 #' @export ValidateStack
 ValidateStack <- function(stack,i=1) {
   graphExists <- FALSE
@@ -185,6 +220,19 @@ ValidateStack <- function(stack,i=1) {
     for(j in CONFIG_STACK$GRAPH_VARS) if(is.null(stack[[j]][[i]])) return(FALSE)
     for(j in CONFIG_STACK$GRAPH_VARS) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
   }
+
+  # if spline and interactions, cannot graph
+  if(DetectSpline(stack$exposure[[i]]) & DetectInteraction(stack$exposure[[i]]) & graphExists){
+    warning("Cannot have spline*interaction and graphing")
+    return(FALSE)
+  }
+
+  # if spline and interactions, cannot graph
+  if(stringr::str_detect(stack$confounders[[i]],stringr::fixed(stack$exposure[[i]]))){
+    warning("Cannot have exposure existing in confounders")
+    return(FALSE)
+  }
+
   return(TRUE)
 }
 
@@ -364,7 +412,24 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     }
   }
 
-  if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+  if(DetectInteraction(stack$exposure[[i]]) & DetectSpline(stack$exposure[[i]])){
+    res_crude <- ExtractFitsSplinesInteractions(
+      fit0 = fit[["crude0"]],
+      fit1 = fit[["crude1"]],
+      fit1aic = fit[["aic_crude1"]],
+      stack = stack,
+      i = i,
+      data=dataCrude,
+      form=form_crude1)
+    res_adj <- ExtractFitsSplinesInteractions(
+      fit0 = fit[["adj0"]],
+      fit1 = fit[["adj1"]],
+      fit1aic = fit[["aic_adj1"]],
+      stack = stack,
+      i = i,
+      data=dataAdj,
+      form=form_adj1)
+  } else if(RAWmisc::DetectSpline(stack$exposure[[i]])){
     res_crude <- ExtractFitsSplines(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
@@ -392,6 +457,13 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       fit1aic = fit[["aic_adj1"]])
   }
 
+  # wipe out res_crude if it is for interaction terms
+  res_crude[IsInteraction(exposure),b:=NA]
+  res_crude[IsInteraction(exposure),se:=NA]
+  res_crude[IsInteraction(exposure),z:=NA]
+  res_crude[IsInteraction(exposure),p_wald:=NA]
+  res_crude[IsInteraction(exposure),p_lrt:=NA]
+  res_crude[IsInteraction(exposure),aic:=NA]
   setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt","c_aic"))
   setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt","a_aic"))
 
