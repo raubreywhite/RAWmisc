@@ -1,4 +1,4 @@
-#' Detect interaction
+#' Vectorised, is the variable here an interaction
 #' @param var The results
 #' @importFrom stringr str_detect str_remove
 #' @export IsInteraction
