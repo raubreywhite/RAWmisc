@@ -40,21 +40,26 @@ DetectSpline <- function(var){
 #' ExtractExposureConfounders.int
 #' Transforms cos and sin to amplitude peak and trough
 #' @param var The results
-#' @importFrom stringr str_replace_all str_extract str_sub str_detect str_split
+#' @importFrom stringr str_remove str_replace_all str_extract str_sub str_detect str_split
 #' @export ExtractExposureConfounders.int
 ExtractExposureConfounders.int <- function(var){
-  # detect if spline
-  var <- stringr::str_replace_all(var," ","")
-  if(RAWmisc::DetectSpline(var)){
-    var <- stringr::str_extract(var,"ns\\([a-zA-Z0-9_]*,")
-    var <- stringr::str_sub(var,4,-2)
-    return(var)
-  }
+  var <- stringr::str_remove(var," ")
+  var <- stringr::str_replace_all(var,"splines::ns\\(","ns\\(")
 
   # detect interaction
   if(stringr::str_detect(var,":*")){
-    return(unlist(stringr::str_split(var, "[:*]")))
+    var <- unlist(stringr::str_split(var, "[:*]"))
   }
+
+  # detect if spline
+  for(j in 1:length(var)){
+    if(RAWmisc::DetectSpline(var[j])){
+      var[j] <- stringr::str_extract(var[j],"ns\\([a-zA-Z0-9_]*,")
+      var[j] <- stringr::str_sub(var[j],4,-2)
+    }
+  }
+
+  return(var)
 }
 
 #' ExtractExposureConfounders
