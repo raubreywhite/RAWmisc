@@ -66,7 +66,7 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nam
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
 
-  if(!is.null(nameBase) & !is.null(nameInteractions)){
+  if(!is.null(nameBase) & !is.null(nameInteractions)) if(!is.na(nameBase) & !is.na(nameInteractions)){
     temp <- ExtractInteractedEffectEstimates(
       beta=coef(fit1),
       va=vcov(fit1),
