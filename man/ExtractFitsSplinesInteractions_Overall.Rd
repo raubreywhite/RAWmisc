@@ -22,6 +22,8 @@ ExtractFitsSplinesInteractions_Overall(fit0, fit1, fit1aic, stack, i, data,
 \item{data}{data}
 
 \item{form}{the formula}
+
+\item{exposureValue}{a}
 }
 \description{
 ExtractFitsSplinesInteractions_Overall

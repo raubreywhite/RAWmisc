@@ -197,8 +197,9 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
 #' @param stack stack
 #' @param i i
-#' @param form the formula
 #' @param data data
+#' @param form the formula
+#' @param exposureValue a
 #' @importFrom stringr str_replace_all str_extract
 #' @importFrom stats model.frame coef vcov AIC
 #' @importFrom splines ns
