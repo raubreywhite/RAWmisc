@@ -5,7 +5,8 @@
 \title{ExtractFits
 Extract fits}
 \usage{
-ExtractFits(fit0, fit1, fit1aic, exposureValue = 1)
+ExtractFits(fit0, fit1, fit1aic, exposureValue = 1, nameBase = NULL,
+  nameInteractions = NULL)
 }
 \arguments{
 \item{fit0}{The variable of interest}
@@ -15,6 +16,10 @@ ExtractFits(fit0, fit1, fit1aic, exposureValue = 1)
 \item{fit1aic}{with a possibly more friendly family (possion instead of quasipoisson)}
 
 \item{exposureValue}{exposureValue}
+
+\item{nameBase}{base level for interaction terms}
+
+\item{nameInteractions}{interaction variables}
 }
 \description{
 ExtractFits

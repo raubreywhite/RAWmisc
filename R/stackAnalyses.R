@@ -52,10 +52,12 @@ LRTest <- function(fit0, fit1) {
 #' @param fit1 The variable of interest
 #' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
 #' @param exposureValue exposureValue
+#' @param nameBase base level for interaction terms
+#' @param nameInteractions interaction variables
 #' @import data.table
 #' @importFrom stats AIC
 #' @export ExtractFits
-ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1) {
+ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nameInteractions=NULL) {
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame(coef(summary(fit1)))
   names(res) <- c("b", "se", "z", "p_wald")
@@ -63,9 +65,30 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1) {
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
+
+  if(!is.null(nameBase) & !is.null(nameInteractions)){
+    temp <- ExtractInteractedEffectEstimates(
+      beta=coef(fit1),
+      va=vcov(fit1),
+      nameBase=nameBase,
+      nameInteractions=nameInteractions)
+    temp <- data.frame(temp)
+    temp$exposure <- c(sprintf("COMBINATION: %s",nameBase),
+                       sprintf("COMBINATION: %s + %s",nameBase,nameInteractions)
+                      )
+    temp$n <- NA
+    temp$z <- NA
+    temp$p_lrt <- NA
+    temp <- temp[,c("exposure","n","beta","se","z","p","p_lrt")]
+    names(temp) <- c("exposure","n","b","se","z","p_wald","p_lrt")
+    res <- rbind(res,temp)
+  }
+
   res$b <- res$b*exposureValue
   res$se <- res$se*exposureValue
   res$aic <- AIC(fit1aic)
+
+
   setDT(res)
   return(res)
 }
@@ -193,6 +216,8 @@ CreateStackSkeleton <- function(n=1) {
   s$outcome <- NA
   s$exposure <- NA
   s$confounders <- NA
+  s$nameBase <- NA
+  s$nameInteractions <- NA
   s$data <- NA
   s$graphExposureScaleMultiply <- 1
   s$graphExposureScaleAdd <- 1
@@ -228,7 +253,7 @@ ValidateStack <- function(stack,i=1) {
   }
 
   # if spline and interactions, cannot graph
-  if(stringr::str_detect(stack$confounders[[i]],stringr::fixed(stack$exposure[[i]]))){
+  if(sum(stringr::str_detect(stack$confounders[[i]],stringr::fixed(stack$exposure[[i]])))){
     warning("Cannot have exposure existing in confounders")
     return(FALSE)
   }
@@ -454,7 +479,9 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     res_adj <- ExtractFits(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
-      fit1aic = fit[["aic_adj1"]])
+      fit1aic = fit[["aic_adj1"]],
+      nameBase = stack$nameBase[[i]],
+      nameInteractions = stack$nameInteractions[[i]])
   }
 
   # wipe out res_crude if it is for interaction terms
@@ -468,6 +495,10 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt","a_aic"))
 
   res <- merge(res_crude, res_adj, by = "exposure")
+  if(sum(stringr::str_detect(res_adj$exposure,"COMBINATION:"))){
+    res2 <- merge(res_crude, res_adj[stringr::str_detect(exposure,"COMBINATION:")], by = "exposure",all.y=T)
+    res <- rbind(res,res2)
+  }
 
   res[,analysisID := stack$analysisID[[i]]]
   res[, regressionType := stack$regressionType[[i]]]
