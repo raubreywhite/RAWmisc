@@ -6,7 +6,7 @@
 Extract fits}
 \usage{
 ExtractFitsSplinesInteractions(fit0, fit1, fit1aic, stack, i, data, form,
-  exposureValue = 1)
+  exposureValue = 1, runCombinations = TRUE)
 }
 \arguments{
 \item{fit0}{The variable of interest}
@@ -24,6 +24,8 @@ ExtractFitsSplinesInteractions(fit0, fit1, fit1aic, stack, i, data, form,
 \item{form}{the formula}
 
 \item{exposureValue}{exposureValue}
+
+\item{runCombinations}{runCombinations}
 }
 \description{
 ExtractFitsSplines

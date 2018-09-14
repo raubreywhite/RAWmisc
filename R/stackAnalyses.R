@@ -103,22 +103,34 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nam
 #' @param form the formula
 #' @param data data
 #' @param exposureValue exposureValue
+#' @param nameInteractions x
+#' @param levelInteractions x
 #' @importFrom stringr str_replace_all str_extract
 #' @importFrom stats model.frame coef vcov AIC
 #' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplines
-ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1, nameInteractions=NULL, levelInteractions=NULL){
 
   splineExposure <- stringr::str_extract(stack$exposure[[i]],"ns(\\([a-zA-Z0-9_,=]*\\))")
   sp <- NULL
   eval(parse(text=sprintf("sp <- with(data,splines::%s)",splineExposure)))
 
+  exposureSpline <- stringr::str_split(stack$exposure[[i]],":")[[1]]
+  exposureSpline <- exposureSpline[stringr::str_detect(exposureSpline,"^ns\\(")]
   dataNew0 <- data[1,]
-  dataNew0[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- 0
+  for(j in exposureSpline){
+    if(DetectSpline(j)) dataNew0[[RAWmisc::ExtractExposureConfounders(j)]] <- 0
+  }
 
   dataNew1 <- data[1,]
-  dataNew1[[RAWmisc::ExtractExposureConfounders(stack$exposure[[i]])]] <- exposureValue
+  for(j in exposureSpline){
+    if(DetectSpline(j)) dataNew1[[RAWmisc::ExtractExposureConfounders(j)]] <- 1
+  }
+  if(!is.null(nameInteractions) & !is.null(levelInteractions)) if(!is.na(nameInteractions) & !is.na(levelInteractions)){
+    dataNew0[[nameInteractions]] <- levelInteractions
+    dataNew1[[nameInteractions]] <- levelInteractions
+  }
 
   newFormula <- stringr::str_replace_all(form," ","")
   newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
@@ -129,8 +141,10 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
                                          sprintf("c(%s)",paste0(attributes(sp)$Boundary.knots,collapse=","))
                                         ))
 
-  m0temp <- model.frame(newFormula,data=dataNew0)
-  m1temp <- model.frame(newFormula,data=dataNew1)
+  #m0temp <- model.frame(newFormula,data=dataNew0)
+  #m1temp <- model.frame(newFormula,data=dataNew1)
+  m0temp <- model.matrix(as.formula(newFormula),data=dataNew0)
+  m1temp <- model.matrix(as.formula(newFormula),data=dataNew1)
   m0 <- c(1)
   m1 <- c(1)
   # starts from 2 to avoid the Y, which is the first value!!
@@ -176,22 +190,7 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
   return(res)
 }
 
-#' ExtractFitsSplines
-#' Extract fits
-#' @param fit0 The variable of interest
-#' @param fit1 The variable of interest
-#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
-#' @param stack stack
-#' @param i i
-#' @param form the formula
-#' @param data data
-#' @param exposureValue exposureValue
-#' @importFrom stringr str_replace_all str_extract
-#' @importFrom stats model.frame coef vcov AIC
-#' @importFrom splines ns
-#' @import data.table
-#' @export ExtractFitsSplinesInteractions
-ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame("b"=NA,
                     "se"=NA,
@@ -203,6 +202,57 @@ ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, 
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
   res$aic <- AIC(fit1aic)
   setDT(res)
+  return(res)
+}
+
+#' ExtractFitsSplines
+#' Extract fits
+#' @param fit0 The variable of interest
+#' @param fit1 The variable of interest
+#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
+#' @param stack stack
+#' @param i i
+#' @param form the formula
+#' @param data data
+#' @param exposureValue exposureValue
+#' @param runCombinations runCombinations
+#' @importFrom stringr str_replace_all str_extract
+#' @importFrom stats model.frame coef vcov AIC
+#' @importFrom splines ns
+#' @import data.table
+#' @export ExtractFitsSplinesInteractions
+ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1, runCombinations=TRUE){
+  res <- list()
+  res[[1]] <- ExtractFitsSplinesInteractions_Overall(
+    fit0=fit0,
+    fit1=fit1,
+    fit1aic=fit1aic,
+    stack=stack,
+    i=i,
+    data=data,
+    form=form,
+    exposureValue=exposureValue
+  )
+  if(runCombinations) if(!is.null(stack$nameInteractions[[i]])) if(!is.na(stack$nameInteractions[[i]])){
+    values <- na.omit(unique(data[[stack$nameInteractions[[i]]]]))
+    for(j in 1:length(values)){
+      res[[j+1]] <- ExtractFitsSplines(
+        fit0=fit0,
+        fit1=fit1,
+        fit1aic=fit1aic,
+        stack=stack,
+        i=i,
+        data=data,
+        form=form,
+        exposureValue=exposureValue,
+        nameInteractions=stack$nameInteractions[[i]],
+        levelInteractions=values[j]
+      )
+      res[[j+1]][,exposure:=sprintf("COMBINATION AT %s=%s: %s",stack$nameInteractions[[i]],values[j],exposure)]
+    }
+  }
+  res <- rbindlist(res)
+
   return(res)
 }
 
@@ -445,7 +495,8 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       stack = stack,
       i = i,
       data=dataCrude,
-      form=form_crude1)
+      form=form_crude1,
+      runCombinations=F)
     res_adj <- ExtractFitsSplinesInteractions(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
@@ -495,8 +546,8 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt","a_aic"))
 
   res <- merge(res_crude, res_adj, by = "exposure")
-  if(sum(stringr::str_detect(res_adj$exposure,"COMBINATION:"))){
-    res2 <- merge(res_crude, res_adj[stringr::str_detect(exposure,"COMBINATION:")], by = "exposure",all.y=T)
+  if(sum(stringr::str_detect(res_adj$exposure,"COMBINATION"))){
+    res2 <- merge(res_crude, res_adj[stringr::str_detect(exposure,"COMBINATION")], by = "exposure",all.y=T)
     res <- rbind(res,res2)
   }
 

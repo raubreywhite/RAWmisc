@@ -121,3 +121,61 @@ test_that("interactions with spline", {
 
   expect_equal(a$a_b,NA)
 })
+
+test_that("spline interact and get out results", {
+  set.seed(4)
+  x <- 1:10000
+  interaction <- rep(c(0,1),5000)
+  y <- 1*x+1*x*interaction+rnorm(10000)
+
+  data <- data.frame(x,y,interaction)
+  fit0 <- lm(y~splines::ns(x,df=4)+interaction,data=data)
+  fit1 <- lm(y~splines::ns(x,df=4)+interaction+splines::ns(x,df=4):interaction,data=data)
+
+  stack <- RAWmisc::CreateStackSkeleton(n=1)
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "splines::ns(x,df=4):interaction"
+  stack$nameInteractions = "interaction"
+  stack$data <- "data"
+
+  a <- ExtractFitsSplinesInteractions(fit0=fit0,
+                          fit1=fit1,
+                          fit1aic=fit1,
+                          stack=stack,
+                          i=1,
+                          data=data,
+                          form="y~splines::ns(x,df=4)+interaction+splines::ns(x,df=4):interaction")
+
+  expect_equal(round(a$b*10)/10,c(NA,1,2))
+})
+
+test_that("spline interact and get out results 2", {
+  set.seed(4)
+  x <- floor(1:10000/3500)
+  interaction <- rep(c(0,1),5000)
+  y <- 1*x+1*x*interaction+rnorm(10000)
+
+  data <- data.frame(x,y,interaction)
+  assign("data", data, envir=globalenv())
+
+  stack <- RAWmisc::CreateStackSkeleton(n=length(1))
+  stack$regressionType <- "linear"
+  stack$outcome <- "y"
+  stack$exposure <- "splines::ns(x,df=2):interaction"
+  stack$confounders <- list(c("splines::ns(x,df=2)","interaction"))
+  stack$nameInteractions = "interaction"
+  stack$data <- "data"
+  stack$graphExposureScaleMultiply <- 2
+  stack$graphExposureScaleAdd <- 5
+  stack$graphReference <- 0
+  stack$graphExposureLocationsLabels <- list(c(0.1,0.5,1))
+  stack$graphExposureLocations <- list(c(0.1,0.5,1))
+  stack$graphTitleMain <- "title"
+  stack$graphTitleX <- "test"
+
+
+  a <- ProcessStack(stack=stack,i=1)
+
+  expect_equal(round(a$a_b*10)/10,c(NA,1,2))
+})

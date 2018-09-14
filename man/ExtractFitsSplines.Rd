@@ -6,7 +6,7 @@
 Extract fits}
 \usage{
 ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data, form,
-  exposureValue = 1)
+  exposureValue = 1, nameInteractions = NULL, levelInteractions = NULL)
 }
 \arguments{
 \item{fit0}{The variable of interest}
@@ -24,6 +24,10 @@ ExtractFitsSplines(fit0, fit1, fit1aic, stack, i, data, form,
 \item{form}{the formula}
 
 \item{exposureValue}{exposureValue}
+
+\item{nameInteractions}{x}
+
+\item{levelInteractions}{x}
 }
 \description{
 ExtractFitsSplines
