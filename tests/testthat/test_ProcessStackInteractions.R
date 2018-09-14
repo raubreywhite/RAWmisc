@@ -150,7 +150,7 @@ test_that("spline interact and get out results", {
   expect_equal(round(a$b*10)/10,c(NA,1,2))
 })
 
-test_that("spline interact and get out results 2", {
+test_that("spline interact and get out results 2 ", {
   set.seed(4)
   x <- floor(1:10000/3500)
   interaction <- rep(c(0,1),5000)
