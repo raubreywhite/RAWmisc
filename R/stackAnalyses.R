@@ -106,7 +106,7 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nam
 #' @param nameInteractions x
 #' @param levelInteractions x
 #' @importFrom stringr str_replace_all str_extract
-#' @importFrom stats model.frame coef vcov AIC
+#' @importFrom stats model.matrix coef vcov AIC
 #' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplines
@@ -190,6 +190,20 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
   return(res)
 }
 
+#' ExtractFitsSplinesInteractions_Overall
+#' Extract fits
+#' @param fit0 The variable of interest
+#' @param fit1 The variable of interest
+#' @param fit1aic with a possibly more friendly family (possion instead of quasipoisson)
+#' @param stack stack
+#' @param i i
+#' @param form the formula
+#' @param data data
+#' @importFrom stringr str_replace_all str_extract
+#' @importFrom stats model.frame coef vcov AIC
+#' @importFrom splines ns
+#' @import data.table
+#' @export ExtractFitsSplinesInteractions_Overall
 ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame("b"=NA,
