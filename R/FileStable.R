@@ -1,5 +1,5 @@
-#' IsFileStable
-#' This determines if the file is stable (size not increasing/decreasing)
+#' Is the file stable (size not increasing/decreasing)?
+#'
 #' @param file The file of interest
 #' @param delay Number of seconds between checking file size a second time
 #' @export IsFileStable

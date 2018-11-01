@@ -1,4 +1,5 @@
-#' Allows for recoding of variables
+#' Recoding variables in data.table
+#'
 #' @param d a
 #' @param switch a vector coded like: c("old"="new")
 #' @param var a

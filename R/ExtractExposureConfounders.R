@@ -1,4 +1,5 @@
-#' Vectorised, is the variable here an interaction
+#' Is the variable here an interaction?
+#'
 #' @param var The results
 #' @importFrom stringr str_detect str_remove
 #' @export IsInteraction
@@ -7,7 +8,8 @@ IsInteraction <- function(var){
   return(stringr::str_detect(varx,":"))
 }
 
-#' Detect interaction
+#' Detects interaction
+#'
 #' @param var The results
 #' @importFrom stringr str_detect str_remove
 #' @export DetectInteraction

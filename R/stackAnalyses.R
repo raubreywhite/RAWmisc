@@ -206,6 +206,8 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @import data.table
 #' @export ExtractFitsSplinesInteractions_Overall
 ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+  exposure <- NULL
+
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame("b"=NA,
                     "se"=NA,
@@ -237,6 +239,8 @@ ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i
 #' @import data.table
 #' @export ExtractFitsSplinesInteractions
 ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1, runCombinations=TRUE){
+  exposure <- NULL
+
   res <- list()
   res[[1]] <- ExtractFitsSplinesInteractions_Overall(
     fit0=fit0,
@@ -409,6 +413,19 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
   c_est <- NULL
   c_b <- NULL
   c_se <- NULL
+  exposure <- NULL
+  b <- NULL
+  se <- NULL
+  z <- NULL
+  p_wald <- NULL
+  p_lrt <- NULL
+  aic <- NULL
+  analysisID <- NULL
+  exposureValue <- NULL
+  exposureValueScaled <- NULL
+  est <- NULL
+  l95 <- NULL
+  u95 <- NULL
 
   if (stack$regressionType[[i]] == "logistic") {
     aicFamily <- analysisFamily <- binomial()

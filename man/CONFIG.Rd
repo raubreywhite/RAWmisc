@@ -4,7 +4,7 @@
 \name{CONFIG}
 \alias{CONFIG}
 \title{CONFIG}
-\format{An object of class \code{environment} of length 4.}
+\format{An object of class \code{environment} of length 1.}
 \usage{
 CONFIG
 }

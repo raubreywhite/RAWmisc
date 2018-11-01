@@ -2,3 +2,5 @@
 project.Rproj
 ^.*\.Rproj$
 ^\.Rproj\.user$
+deploy.sh
+make.sh

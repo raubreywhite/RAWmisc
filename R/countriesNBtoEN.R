@@ -1,3 +1,5 @@
+#' Norwegian to English country names
+#'
 #' This function returns a named vector.
 #' The names are Norwegian country names and the
 #' values are English country names.
