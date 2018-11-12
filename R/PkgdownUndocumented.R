@@ -7,7 +7,7 @@
 PkgdownUndocumented <- function(pkgroot=".",pkgdown=file.path(pkgroot,"pkgdown","_pkgdown.yml")){
   documentedYAML <- yaml::read_yaml(pkgdown)$reference
   documented <- c()
-  for(i in seq_along(allYAML)){
+  for(i in seq_along(documentedYAML)){
     documented <- c(documented,documentedYAML[[i]]$contents)
   }
 
