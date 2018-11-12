@@ -1,4 +1,5 @@
 #' PkgdownUndocumented
+#'
 #' @param pkgroot Root the package
 #' @param pkgdown Location of the pkgdown.yml file
 #' @importFrom yaml read_yaml
