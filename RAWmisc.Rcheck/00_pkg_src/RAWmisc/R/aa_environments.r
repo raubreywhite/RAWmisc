@@ -16,11 +16,12 @@ NORCHAR$ae <- "\u00E6"
 #' Environment for holding configs relevant to stack analyses
 #' @export CONFIG_STACK
 CONFIG_STACK <- new.env(parent = emptyenv())
-CONFIG_STACK$GRAPH_VARS <- c("graphExposureScaleMultiply",
-               "graphExposureScaleAdd",
-               "graphReference",
-               "graphExposureLocations",
-               "graphFileName",
-               "graphTitleMain",
-               "graphTitleX"
-               )
+CONFIG_STACK$GRAPH_VARS <- c(
+  "graphExposureScaleMultiply",
+  "graphExposureScaleAdd",
+  "graphReference",
+  "graphExposureLocations",
+  "graphFileName",
+  "graphTitleMain",
+  "graphTitleX"
+)

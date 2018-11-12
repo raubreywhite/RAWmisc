@@ -7,7 +7,7 @@ TransformCosSinToAmplitudePeakTrough <- function(cos_b, sin_b) {
   b1 <- sin_b # sin
   b2 <- cos_b # cos
 
-  amplitude <- sqrt(b1 ^ 2 + b2 ^ 2)
+  amplitude <- sqrt(b1^2 + b2^2)
   p <- atan(b1 / b2) * 366 / 2 / pi
   if (p > 0) {
     peak <- p
@@ -57,7 +57,7 @@ LRTest <- function(fit0, fit1) {
 #' @import data.table
 #' @importFrom stats AIC
 #' @export ExtractFits
-ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nameInteractions=NULL) {
+ExtractFits <- function(fit0, fit1, fit1aic, exposureValue = 1, nameBase = NULL, nameInteractions = NULL) {
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
   res <- data.frame(coef(summary(fit1)))
   names(res) <- c("b", "se", "z", "p_wald")
@@ -66,26 +66,30 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nam
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
 
-  if(!is.null(nameBase) & !is.null(nameInteractions)) if(!is.na(nameBase) & !is.na(nameInteractions)){
-    temp <- ExtractInteractedEffectEstimates(
-      beta=coef(fit1),
-      va=vcov(fit1),
-      nameBase=nameBase,
-      nameInteractions=nameInteractions)
-    temp <- data.frame(temp)
-    temp$exposure <- c(sprintf("COMBINATION: %s",nameBase),
-                       sprintf("COMBINATION: %s + %s",nameBase,nameInteractions)
-                      )
-    temp$n <- NA
-    temp$z <- NA
-    temp$p_lrt <- NA
-    temp <- temp[,c("exposure","n","beta","se","z","p","p_lrt")]
-    names(temp) <- c("exposure","n","b","se","z","p_wald","p_lrt")
-    res <- rbind(res,temp)
+  if (!is.null(nameBase) & !is.null(nameInteractions)) {
+    if (!is.na(nameBase) & !is.na(nameInteractions)) {
+      temp <- ExtractInteractedEffectEstimates(
+        beta = coef(fit1),
+        va = vcov(fit1),
+        nameBase = nameBase,
+        nameInteractions = nameInteractions
+      )
+      temp <- data.frame(temp)
+      temp$exposure <- c(
+        sprintf("COMBINATION: %s", nameBase),
+        sprintf("COMBINATION: %s + %s", nameBase, nameInteractions)
+      )
+      temp$n <- NA
+      temp$z <- NA
+      temp$p_lrt <- NA
+      temp <- temp[, c("exposure", "n", "beta", "se", "z", "p", "p_lrt")]
+      names(temp) <- c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")
+      res <- rbind(res, temp)
+    }
   }
 
-  res$b <- res$b*exposureValue
-  res$se <- res$se*exposureValue
+  res$b <- res$b * exposureValue
+  res$se <- res$se * exposureValue
   res$aic <- AIC(fit1aic)
 
 
@@ -110,78 +114,84 @@ ExtractFits <- function(fit0, fit1, fit1aic, exposureValue=1, nameBase=NULL, nam
 #' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplines
-ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1, nameInteractions=NULL, levelInteractions=NULL){
-
-  splineExposure <- stringr::str_extract(stack$exposure[[i]],"ns(\\([a-zA-Z0-9_,=]*\\))")
+ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue = 1, nameInteractions = NULL, levelInteractions = NULL) {
+  splineExposure <- stringr::str_extract(stack$exposure[[i]], "ns(\\([a-zA-Z0-9_,=]*\\))")
   sp <- NULL
-  eval(parse(text=sprintf("sp <- with(data,splines::%s)",splineExposure)))
+  eval(parse(text = sprintf("sp <- with(data,splines::%s)", splineExposure)))
 
-  exposureSpline <- stringr::str_split(stack$exposure[[i]],":")[[1]]
-  exposureSpline <- exposureSpline[stringr::str_detect(exposureSpline,"^ns\\(")]
-  dataNew0 <- data[1,]
-  for(j in exposureSpline){
-    if(DetectSpline(j)) dataNew0[[RAWmisc::ExtractExposureConfounders(j)]] <- 0
+  exposureSpline <- stringr::str_split(stack$exposure[[i]], ":")[[1]]
+  exposureSpline <- exposureSpline[stringr::str_detect(exposureSpline, "^ns\\(")]
+  dataNew0 <- data[1, ]
+  for (j in exposureSpline) {
+    if (DetectSpline(j)) dataNew0[[RAWmisc::ExtractExposureConfounders(j)]] <- 0
   }
 
-  dataNew1 <- data[1,]
-  for(j in exposureSpline){
-    if(DetectSpline(j)) dataNew1[[RAWmisc::ExtractExposureConfounders(j)]] <- 1
+  dataNew1 <- data[1, ]
+  for (j in exposureSpline) {
+    if (DetectSpline(j)) dataNew1[[RAWmisc::ExtractExposureConfounders(j)]] <- 1
   }
-  if(!is.null(nameInteractions) & !is.null(levelInteractions)) if(!is.na(nameInteractions) & !is.na(levelInteractions)){
-    dataNew0[[nameInteractions]] <- levelInteractions
-    dataNew1[[nameInteractions]] <- levelInteractions
+  if (!is.null(nameInteractions) & !is.null(levelInteractions)) {
+    if (!is.na(nameInteractions) & !is.na(levelInteractions)) {
+      dataNew0[[nameInteractions]] <- levelInteractions
+      dataNew1[[nameInteractions]] <- levelInteractions
+    }
   }
 
-  newFormula <- stringr::str_replace_all(form," ","")
-  newFormula <- stringr::str_replace_all(newFormula,"ns(\\([a-zA-Z0-9_,=]*\\))","ns\\1&&")
-  newFormula <- stringr::str_replace_all(newFormula,"\\)&&",
-                                         sprintf(",knots=%s,intercept=%s,Boundary.knots=%s\\)",
-                                         sprintf("c(%s)",paste0(attributes(sp)$knots,collapse=",")),
-                                         attributes(sp)$intercept,
-                                         sprintf("c(%s)",paste0(attributes(sp)$Boundary.knots,collapse=","))
-                                        ))
+  newFormula <- stringr::str_replace_all(form, " ", "")
+  newFormula <- stringr::str_replace_all(newFormula, "ns(\\([a-zA-Z0-9_,=]*\\))", "ns\\1&&")
+  newFormula <- stringr::str_replace_all(
+    newFormula, "\\)&&",
+    sprintf(
+      ",knots=%s,intercept=%s,Boundary.knots=%s\\)",
+      sprintf("c(%s)", paste0(attributes(sp)$knots, collapse = ",")),
+      attributes(sp)$intercept,
+      sprintf("c(%s)", paste0(attributes(sp)$Boundary.knots, collapse = ","))
+    )
+  )
 
-  #m0temp <- model.frame(newFormula,data=dataNew0)
-  #m1temp <- model.frame(newFormula,data=dataNew1)
-  m0temp <- model.matrix(as.formula(newFormula),data=dataNew0)
-  m1temp <- model.matrix(as.formula(newFormula),data=dataNew1)
+  # m0temp <- model.frame(newFormula,data=dataNew0)
+  # m1temp <- model.frame(newFormula,data=dataNew1)
+  m0temp <- model.matrix(as.formula(newFormula), data = dataNew0)
+  m1temp <- model.matrix(as.formula(newFormula), data = dataNew1)
   m0 <- c(1)
   m1 <- c(1)
   # starts from 2 to avoid the Y, which is the first value!!
-  for(j in 2:length(m0temp)){
-    if(!is.factor(m0temp[[j]])){
-      m0 <- c(m0,m0temp[[j]])
+  for (j in 2:length(m0temp)) {
+    if (!is.factor(m0temp[[j]])) {
+      m0 <- c(m0, m0temp[[j]])
     } else {
-      m0 <- c(m0,as.numeric(levels(m0temp[[j]])==m0temp[[j]])[-1])
+      m0 <- c(m0, as.numeric(levels(m0temp[[j]]) == m0temp[[j]])[-1])
     }
   }
-  for(j in 2:length(m1temp)){
-    if(!is.factor(m1temp[[j]])){
-      m1 <- c(m1,m1temp[[j]])
+  for (j in 2:length(m1temp)) {
+    if (!is.factor(m1temp[[j]])) {
+      m1 <- c(m1, m1temp[[j]])
     } else {
-      m1 <- c(m1,as.numeric(levels(m1temp[[j]])==m1temp[[j]])[-1])
+      m1 <- c(m1, as.numeric(levels(m1temp[[j]]) == m1temp[[j]])[-1])
     }
   }
-  changedVars <- m0!=m1
-  m0 <- matrix(m0,nrow=1)
-  m1 <- matrix(m1,nrow=1)
+  changedVars <- m0 != m1
+  m0 <- matrix(m0, nrow = 1)
+  m1 <- matrix(m1, nrow = 1)
 
-  estDif <- (m1[,changedVars]-m0[,changedVars]) %*% coef(fit1)[changedVars]
+  estDif <- (m1[, changedVars] - m0[, changedVars]) %*% coef(fit1)[changedVars]
 
-  newVCOV <- vcov(fit1)[changedVars,changedVars]
-  newVCOV <- rbind(newVCOV,newVCOV)
-  newVCOV <- cbind(newVCOV,newVCOV)
-  m <- c(m1[,changedVars],-m0[,changedVars])
+  newVCOV <- vcov(fit1)[changedVars, changedVars]
+  newVCOV <- rbind(newVCOV, newVCOV)
+  newVCOV <- cbind(newVCOV, newVCOV)
+  m <- c(m1[, changedVars], -m0[, changedVars])
 
   newVar <- 0
-  for(j in 1:length(m)) for(k in 1:length(m)) newVar <- newVar + m[j]*m[k]*newVCOV[j,k]
+  for (j in 1:length(m)) for (k in 1:length(m)) newVar <- newVar + m[j] * m[k] * newVCOV[j, k]
 
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
-  res <- data.frame("b"=estDif,
-                    "se"=sqrt(newVar),
-                    "z"=estDif/sqrt(newVar),
-                    "p_wald" = RAWmisc::CalcPValue(beta=estDif,se=sqrt(newVar)))
-  res$exposure <- sprintf("0 to %s, %s",exposureValue,stack$exposure[[i]])
+  res <- data.frame(
+    "b" = estDif,
+    "se" = sqrt(newVar),
+    "z" = estDif / sqrt(newVar),
+    "p_wald" = RAWmisc::CalcPValue(beta = estDif, se = sqrt(newVar))
+  )
+  res$exposure <- sprintf("0 to %s, %s", exposureValue, stack$exposure[[i]])
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
@@ -205,15 +215,17 @@ ExtractFitsSplines <- function(fit0, fit1, fit1aic, stack, i, data, form, exposu
 #' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplinesInteractions_Overall
-ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1){
+ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue = 1) {
   exposure <- NULL
 
   p_lrt <- RAWmisc::LRTest(fit0, fit1)
-  res <- data.frame("b"=NA,
-                    "se"=NA,
-                    "z"=NA,
-                    "p_wald" = NA)
-  res$exposure <- sprintf("0 to %s, %s",exposureValue,stack$exposure[[i]])
+  res <- data.frame(
+    "b" = NA,
+    "se" = NA,
+    "z" = NA,
+    "p_wald" = NA
+  )
+  res$exposure <- sprintf("0 to %s, %s", exposureValue, stack$exposure[[i]])
   res$n <- sum(!is.na(fit1$fitted.values))
   res$p_lrt <- p_lrt
   res <- res[, c("exposure", "n", "b", "se", "z", "p_wald", "p_lrt")]
@@ -238,36 +250,40 @@ ExtractFitsSplinesInteractions_Overall <- function(fit0, fit1, fit1aic, stack, i
 #' @importFrom splines ns
 #' @import data.table
 #' @export ExtractFitsSplinesInteractions
-ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue=1, runCombinations=TRUE){
+ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, form, exposureValue = 1, runCombinations = TRUE) {
   exposure <- NULL
 
   res <- list()
   res[[1]] <- ExtractFitsSplinesInteractions_Overall(
-    fit0=fit0,
-    fit1=fit1,
-    fit1aic=fit1aic,
-    stack=stack,
-    i=i,
-    data=data,
-    form=form,
-    exposureValue=exposureValue
+    fit0 = fit0,
+    fit1 = fit1,
+    fit1aic = fit1aic,
+    stack = stack,
+    i = i,
+    data = data,
+    form = form,
+    exposureValue = exposureValue
   )
-  if(runCombinations) if(!is.null(stack$nameInteractions[[i]])) if(!is.na(stack$nameInteractions[[i]])){
-    values <- na.omit(unique(data[[stack$nameInteractions[[i]]]]))
-    for(j in 1:length(values)){
-      res[[j+1]] <- ExtractFitsSplines(
-        fit0=fit0,
-        fit1=fit1,
-        fit1aic=fit1aic,
-        stack=stack,
-        i=i,
-        data=data,
-        form=form,
-        exposureValue=exposureValue,
-        nameInteractions=stack$nameInteractions[[i]],
-        levelInteractions=values[j]
-      )
-      res[[j+1]][,exposure:=sprintf("COMBINATION AT %s=%s: %s",stack$nameInteractions[[i]],values[j],exposure)]
+  if (runCombinations) {
+    if (!is.null(stack$nameInteractions[[i]])) {
+      if (!is.na(stack$nameInteractions[[i]])) {
+        values <- na.omit(unique(data[[stack$nameInteractions[[i]]]]))
+        for (j in 1:length(values)) {
+          res[[j + 1]] <- ExtractFitsSplines(
+            fit0 = fit0,
+            fit1 = fit1,
+            fit1aic = fit1aic,
+            stack = stack,
+            i = i,
+            data = data,
+            form = form,
+            exposureValue = exposureValue,
+            nameInteractions = stack$nameInteractions[[i]],
+            levelInteractions = values[j]
+          )
+          res[[j + 1]][, exposure := sprintf("COMBINATION AT %s=%s: %s", stack$nameInteractions[[i]], values[j], exposure)]
+        }
+      }
     }
   }
   res <- rbindlist(res)
@@ -279,8 +295,8 @@ ExtractFitsSplinesInteractions <- function(fit0, fit1, fit1aic, stack, i, data, 
 #' This creates the skeleton analysis stack
 #' @param n The variable of interest
 #' @export CreateStackSkeleton
-CreateStackSkeleton <- function(n=1) {
-  s <- data.frame(analysisID = UUID(n),stringsAsFactors = F)
+CreateStackSkeleton <- function(n = 1) {
+  s <- data.frame(analysisID = UUID(n), stringsAsFactors = F)
   s$regressionType <- rep(NA, n)
   s$outcome <- NA
   s$exposure <- NA
@@ -306,23 +322,23 @@ CreateStackSkeleton <- function(n=1) {
 #' @param i The variable of interest
 #' @importFrom stringr str_detect fixed
 #' @export ValidateStack
-ValidateStack <- function(stack,i=1) {
+ValidateStack <- function(stack, i = 1) {
   graphExists <- FALSE
-  for(j in CONFIG_STACK$GRAPH_VARS) if(!is.na(stack$graphFileName[[i]])) graphExists <- TRUE
+  for (j in CONFIG_STACK$GRAPH_VARS) if (!is.na(stack$graphFileName[[i]])) graphExists <- TRUE
 
-  if(graphExists){
-    for(j in CONFIG_STACK$GRAPH_VARS) if(is.null(stack[[j]][[i]])) return(FALSE)
-    for(j in CONFIG_STACK$GRAPH_VARS) if(sum(is.na(stack[[j]][[i]]))>0) return(FALSE)
+  if (graphExists) {
+    for (j in CONFIG_STACK$GRAPH_VARS) if (is.null(stack[[j]][[i]])) return(FALSE)
+    for (j in CONFIG_STACK$GRAPH_VARS) if (sum(is.na(stack[[j]][[i]])) > 0) return(FALSE)
   }
 
   # if spline and interactions, cannot graph
-  if(DetectSpline(stack$exposure[[i]]) & DetectInteraction(stack$exposure[[i]]) & graphExists){
+  if (DetectSpline(stack$exposure[[i]]) & DetectInteraction(stack$exposure[[i]]) & graphExists) {
     warning("Cannot have spline*interaction and graphing")
     return(FALSE)
   }
 
   # if spline and interactions, cannot graph
-  if(sum(stringr::str_detect(stack$confounders[[i]],stringr::fixed(stack$exposure[[i]])))){
+  if (sum(stringr::str_detect(stack$confounders[[i]], stringr::fixed(stack$exposure[[i]])))) {
     warning("Cannot have exposure existing in confounders")
     return(FALSE)
   }
@@ -337,8 +353,8 @@ ValidateStack <- function(stack,i=1) {
 #' @param i index stackFrom
 #' @param j index stackNew
 #' @export CopyStack
-CopyStack <- function(stackFrom,stackNew,i=1,j=1) {
-  for(n in names(stackFrom)){
+CopyStack <- function(stackFrom, stackNew, i = 1, j = 1) {
+  for (n in names(stackFrom)) {
     stackNew[[n]][j] <- stackFrom[[n]][i]
   }
 
@@ -351,20 +367,20 @@ CopyStack <- function(stackFrom,stackNew,i=1,j=1) {
 #' @param i The variable of interest
 #' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
 #' @export ExpandStack.int
-ExpandStack.int <- function(stack,i=1, newAnalysisID=FALSE) {
-  stackNew <- RAWmisc::CreateStackSkeleton(n=length(stack$confounders[[i]])+1)
+ExpandStack.int <- function(stack, i = 1, newAnalysisID = FALSE) {
+  stackNew <- RAWmisc::CreateStackSkeleton(n = length(stack$confounders[[i]]) + 1)
 
 
-  for(j in 1:nrow(stackNew)){
-    stackNew <- CopyStack(stackFrom=stack, stackNew=stackNew, i=i, j=j)
-    allVars <- c(stack$exposure[[i]],stack$confounders[[i]])
+  for (j in 1:nrow(stackNew)) {
+    stackNew <- CopyStack(stackFrom = stack, stackNew = stackNew, i = i, j = j)
+    allVars <- c(stack$exposure[[i]], stack$confounders[[i]])
     stackNew$exposure[[j]] <- allVars[j]
     stackNew$confounders[[j]] <- allVars[-j]
 
-    for(k in CONFIG_STACK$GRAPH_VARS) stackNew[[k]][[j]] <- NA
+    for (k in CONFIG_STACK$GRAPH_VARS) stackNew[[k]][[j]] <- NA
   }
 
-  if(newAnalysisID) stackNew$analysisID <- UUID()
+  if (newAnalysisID) stackNew$analysisID <- UUID()
 
   return(stackNew)
 }
@@ -374,13 +390,13 @@ ExpandStack.int <- function(stack,i=1, newAnalysisID=FALSE) {
 #' @param stack stack
 #' @param newAnalysisID If you want new analysis IDs generated (i.e. link broken between expanded stack and old stack)
 #' @export ExpandStack
-ExpandStack <- function(stack, newAnalysisID=FALSE) {
-  stackFinal <- RAWmisc::CreateStackSkeleton(n=length(unlist(stack$confounders))+length(unlist(stack$exposure)))
+ExpandStack <- function(stack, newAnalysisID = FALSE) {
+  stackFinal <- RAWmisc::CreateStackSkeleton(n = length(unlist(stack$confounders)) + length(unlist(stack$exposure)))
   index <- 1
-  for(j in 1:nrow(stack)){
-    stackExpanded <- ExpandStack.int(stack,j)
-    for(k in 1:nrow(stackExpanded)){
-      stackFinal <- CopyStack(stackFrom=stackExpanded, stackNew = stackFinal,i=k,j=index)
+  for (j in 1:nrow(stack)) {
+    stackExpanded <- ExpandStack.int(stack, j)
+    for (k in 1:nrow(stackExpanded)) {
+      stackFinal <- CopyStack(stackFrom = stackExpanded, stackNew = stackFinal, i = k, j = index)
       index <- index + 1
     }
   }
@@ -399,11 +415,11 @@ ExpandStack <- function(stack, newAnalysisID=FALSE) {
 #' @import ggplot2
 #' @import data.table
 #' @export ProcessStack
-ProcessStack <- function(stack, i, formatResults=FALSE) {
-  if (!stack$regressionType[[i]] %in% c("logistic", "linear","poisson","negbin")) {
+ProcessStack <- function(stack, i, formatResults = FALSE) {
+  if (!stack$regressionType[[i]] %in% c("logistic", "linear", "poisson", "negbin")) {
     stop("Non-supported regression type")
   }
-  if(!ValidateStack(stack,i)) stop("Stack not validated")
+  if (!ValidateStack(stack, i)) stop("Stack not validated")
 
   regressionType <- NULL
   outcome <- NULL
@@ -431,15 +447,15 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     aicFamily <- analysisFamily <- binomial()
     expResults <- TRUE
     graphTitleY <- "Odds ratio"
-  } else if(stack$regressionType[[i]] == "linear"){
+  } else if (stack$regressionType[[i]] == "linear") {
     aicFamily <- analysisFamily <- gaussian()
     expResults <- FALSE
     graphTitleY <- "Effect estimate"
-  } else if(stack$regressionType[[i]] == "poisson"){
+  } else if (stack$regressionType[[i]] == "poisson") {
     aicFamily <- analysisFamily <- poisson()
     expResults <- TRUE
     graphTitleY <- "Incidence rate ratio"
-  } else if(stack$regressionType[[i]] == "negbin"){
+  } else if (stack$regressionType[[i]] == "negbin") {
     aicFamily <- analysisFamily <- NULL
     expResults <- TRUE
     graphTitleY <- "Incidence rate ratio"
@@ -498,14 +514,14 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     } else {
       dataUse <- dataAdj
     }
-    if(j %in% c("aic_crude1","aic_adj1")){
+    if (j %in% c("aic_crude1", "aic_adj1")) {
       familyUse <- aicFamily
     } else {
       familyUse <- analysisFamily
     }
-    formula_form <- stringr::str_replace(j,"aic_","")
+    formula_form <- stringr::str_replace(j, "aic_", "")
 
-    if(stack$regressionType[[i]] == "negbin"){
+    if (stack$regressionType[[i]] == "negbin") {
       fit[[j]] <- MASS::glm.nb(
         as.formula(get(sprintf("form_%s", formula_form))),
         data = dataUse
@@ -519,99 +535,107 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     }
   }
 
-  if(DetectInteraction(stack$exposure[[i]]) & DetectSpline(stack$exposure[[i]])){
+  if (DetectInteraction(stack$exposure[[i]]) & DetectSpline(stack$exposure[[i]])) {
     res_crude <- ExtractFitsSplinesInteractions(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
       fit1aic = fit[["aic_crude1"]],
       stack = stack,
       i = i,
-      data=dataCrude,
-      form=form_crude1,
-      runCombinations=F)
+      data = dataCrude,
+      form = form_crude1,
+      runCombinations = F
+    )
     res_adj <- ExtractFitsSplinesInteractions(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]],
       stack = stack,
       i = i,
-      data=dataAdj,
-      form=form_adj1)
-  } else if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+      data = dataAdj,
+      form = form_adj1
+    )
+  } else if (RAWmisc::DetectSpline(stack$exposure[[i]])) {
     res_crude <- ExtractFitsSplines(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
       fit1aic = fit[["aic_crude1"]],
       stack = stack,
       i = i,
-      data=dataCrude,
-      form=form_crude1)
+      data = dataCrude,
+      form = form_crude1
+    )
     res_adj <- ExtractFitsSplines(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]],
       stack = stack,
       i = i,
-      data=dataAdj,
-      form=form_adj1)
+      data = dataAdj,
+      form = form_adj1
+    )
   } else {
     res_crude <- ExtractFits(
       fit0 = fit[["crude0"]],
       fit1 = fit[["crude1"]],
-      fit1aic = fit[["aic_crude1"]])
+      fit1aic = fit[["aic_crude1"]]
+    )
     res_adj <- ExtractFits(
       fit0 = fit[["adj0"]],
       fit1 = fit[["adj1"]],
       fit1aic = fit[["aic_adj1"]],
       nameBase = stack$nameBase[[i]],
-      nameInteractions = stack$nameInteractions[[i]])
+      nameInteractions = stack$nameInteractions[[i]]
+    )
   }
 
   # wipe out res_crude if it is for interaction terms
-  res_crude[IsInteraction(exposure),b:=NA]
-  res_crude[IsInteraction(exposure),se:=NA]
-  res_crude[IsInteraction(exposure),z:=NA]
-  res_crude[IsInteraction(exposure),p_wald:=NA]
-  res_crude[IsInteraction(exposure),p_lrt:=NA]
-  res_crude[IsInteraction(exposure),aic:=NA]
-  setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt","c_aic"))
-  setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt","a_aic"))
+  res_crude[IsInteraction(exposure), b := NA]
+  res_crude[IsInteraction(exposure), se := NA]
+  res_crude[IsInteraction(exposure), z := NA]
+  res_crude[IsInteraction(exposure), p_wald := NA]
+  res_crude[IsInteraction(exposure), p_lrt := NA]
+  res_crude[IsInteraction(exposure), aic := NA]
+  setnames(res_crude, c("exposure", "c_n", "c_b", "c_se", "c_z", "c_p_wald", "c_p_lrt", "c_aic"))
+  setnames(res_adj, c("exposure", "a_n", "a_b", "a_se", "a_z", "a_p_wald", "a_p_lrt", "a_aic"))
 
   res <- merge(res_crude, res_adj, by = "exposure")
-  if(sum(stringr::str_detect(res_adj$exposure,"COMBINATION"))){
-    res2 <- merge(res_crude, res_adj[stringr::str_detect(exposure,"COMBINATION")], by = "exposure",all.y=T)
-    res <- rbind(res,res2)
+  if (sum(stringr::str_detect(res_adj$exposure, "COMBINATION"))) {
+    res2 <- merge(res_crude, res_adj[stringr::str_detect(exposure, "COMBINATION")], by = "exposure", all.y = T)
+    res <- rbind(res, res2)
   }
 
-  res[,analysisID := stack$analysisID[[i]]]
+  res[, analysisID := stack$analysisID[[i]]]
   res[, regressionType := stack$regressionType[[i]]]
   res[, outcome := stack$outcome[[i]]]
 
   # graphing results
-  if(!is.na(stack$graphFileName[[i]])){
+  if (!is.na(stack$graphFileName[[i]])) {
     #### TO GRAPH
-    toGraph <- vector("list",length=length(stack$graphExposureLocations[[i]]))
-    for(j in 1:length(toGraph)){
+    toGraph <- vector("list", length = length(stack$graphExposureLocations[[i]]))
+    for (j in 1:length(toGraph)) {
       ev <- stack$graphExposureLocations[[i]][j]
-      if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+      if (RAWmisc::DetectSpline(stack$exposure[[i]])) {
         temp <- ExtractFitsSplines(
           fit0 = fit[["adj0"]],
           fit1 = fit[["adj1"]],
           fit1aic = fit[["aic_adj1"]],
           stack = stack,
           i = i,
-          data=dataAdj,
-          form=form_adj1,
-          exposureValue = ev)
+          data = dataAdj,
+          form = form_adj1,
+          exposureValue = ev
+        )
       } else {
         temp <- ExtractFits(
           fit0 = fit[["adj0"]],
           fit1 = fit[["adj1"]],
           fit1aic = fit[["aic_adj1"]],
-          exposureValue = ev)
+          exposureValue = ev
+        )
       }
-      temp[,exposureValue:=ev]
-      toGraph[[j]] <- temp[stringr::str_detect(exposure,stringr::fixed(stack$exposure[[i]]))]
+      temp[, exposureValue := ev]
+      toGraph[[j]] <- temp[stringr::str_detect(exposure, stringr::fixed(stack$exposure[[i]]))]
     }
     toGraph <- rbindlist(toGraph)
     ref <- toGraph[1]
@@ -619,33 +643,35 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
     ref$se <- 0
     ref$exposureValue <- stack$graphReference[[i]]
 
-    toGraph <- rbindlist(list(toGraph,ref))
+    toGraph <- rbindlist(list(toGraph, ref))
 
     #### TO GRAPH LABELS
     toGraphLabels <- NULL
-    if(!is.na(stack$graphExposureLocationsLabels[[i]][1])){
-      toGraphLabels <- vector("list",length=length(stack$graphExposureLocationsLabels[[i]]))
-      for(j in 1:length(toGraphLabels)){
+    if (!is.na(stack$graphExposureLocationsLabels[[i]][1])) {
+      toGraphLabels <- vector("list", length = length(stack$graphExposureLocationsLabels[[i]]))
+      for (j in 1:length(toGraphLabels)) {
         ev <- stack$graphExposureLocationsLabels[[i]][j]
-        if(RAWmisc::DetectSpline(stack$exposure[[i]])){
+        if (RAWmisc::DetectSpline(stack$exposure[[i]])) {
           temp <- ExtractFitsSplines(
             fit0 = fit[["adj0"]],
             fit1 = fit[["adj1"]],
             fit1aic = fit[["aic_adj1"]],
             stack = stack,
             i = i,
-            data=dataAdj,
-            form=form_adj1,
-            exposureValue = ev)
+            data = dataAdj,
+            form = form_adj1,
+            exposureValue = ev
+          )
         } else {
           temp <- ExtractFits(
             fit0 = fit[["adj0"]],
             fit1 = fit[["adj1"]],
             fit1aic = fit[["aic_adj1"]],
-            exposureValue = ev)
+            exposureValue = ev
+          )
         }
-        temp[,exposureValue:=ev]
-        toGraphLabels[[j]] <- temp[stringr::str_detect(exposure,stringr::fixed(stack$exposure[[i]]))]
+        temp[, exposureValue := ev]
+        toGraphLabels[[j]] <- temp[stringr::str_detect(exposure, stringr::fixed(stack$exposure[[i]]))]
       }
       toGraphLabels <- rbindlist(toGraphLabels)
       ref <- toGraphLabels[1]
@@ -653,52 +679,56 @@ ProcessStack <- function(stack, i, formatResults=FALSE) {
       ref$se <- 0
       ref$exposureValue <- stack$graphReference[[i]]
 
-      toGraphLabels <- rbindlist(list(toGraphLabels,ref))
+      toGraphLabels <- rbindlist(list(toGraphLabels, ref))
       toGraphLabels[, est := RAWmisc::FormatEstCIFromEstSE(beta = b, se = se, exp = expResults)]
-      #fixing ref to not have CIs
-      toGraphLabels[exposureValue==stack$graphReference[[i]],
-              est:=sprintf("%s (reference)",ifelse(expResults,exp(stack$graphReference[[i]]),stack$graphReference[[i]]))]
+      # fixing ref to not have CIs
+      toGraphLabels[
+        exposureValue == stack$graphReference[[i]],
+        est := sprintf("%s (reference)", ifelse(expResults, exp(stack$graphReference[[i]]), stack$graphReference[[i]]))
+      ]
     }
     #### END
 
-    if(expResults){
-      toGraph[,l95:=exp(b-1.96*se)]
-      toGraph[,u95:=exp(b+1.96*se)]
-      toGraph[,b:=exp(b)]
-      if(!is.null(toGraphLabels)) toGraphLabels[,b:=exp(b)]
+    if (expResults) {
+      toGraph[, l95 := exp(b - 1.96 * se)]
+      toGraph[, u95 := exp(b + 1.96 * se)]
+      toGraph[, b := exp(b)]
+      if (!is.null(toGraphLabels)) toGraphLabels[, b := exp(b)]
     } else {
-      toGraph[,l95:=b-1.96*se]
-      toGraph[,u95:=b+1.96*se]
+      toGraph[, l95 := b - 1.96 * se]
+      toGraph[, u95 := b + 1.96 * se]
     }
-    toGraph[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
-    if(!is.null(toGraphLabels)) toGraphLabels[,exposureValueScaled:=exposureValue*stack$graphExposureScaleMultiply[[i]]+stack$graphExposureScaleAdd[[i]]]
+    toGraph[, exposureValueScaled := exposureValue * stack$graphExposureScaleMultiply[[i]] + stack$graphExposureScaleAdd[[i]]]
+    if (!is.null(toGraphLabels)) toGraphLabels[, exposureValueScaled := exposureValue * stack$graphExposureScaleMultiply[[i]] + stack$graphExposureScaleAdd[[i]]]
 
     xMin <- min(toGraph$exposureValueScaled)
     xMax <- max(toGraph$exposureValueScaled)
-    dif <- xMax-xMin
-    q <- ggplot(data=toGraph,mapping=aes(x=exposureValueScaled,y=b))
-    if(expResults){
-      q <- q + geom_hline(yintercept = 1,col="black",lty=2)
+    dif <- xMax - xMin
+    q <- ggplot(data = toGraph, mapping = aes(x = exposureValueScaled, y = b))
+    if (expResults) {
+      q <- q + geom_hline(yintercept = 1, col = "black", lty = 2)
     } else {
-      q <- q + geom_hline(yintercept = 0,col="black",lty=2)
+      q <- q + geom_hline(yintercept = 0, col = "black", lty = 2)
     }
-    q <- q + geom_ribbon(alpha=0.4,mapping=aes(ymin=l95,ymax=u95))
+    q <- q + geom_ribbon(alpha = 0.4, mapping = aes(ymin = l95, ymax = u95))
     q <- q + geom_line()
-    if(!is.null(toGraphLabels)){
-      q <- q + geom_point(data=toGraphLabels)
-      q <- q + geom_text(data=toGraphLabels,
-                         mapping=aes(label=est),
-                         alpha=1,
-                         angle=90,
-                         hjust=-0.1,
-                         size=(5/14) * 16)
+    if (!is.null(toGraphLabels)) {
+      q <- q + geom_point(data = toGraphLabels)
+      q <- q + geom_text(
+        data = toGraphLabels,
+        mapping = aes(label = est),
+        alpha = 1,
+        angle = 90,
+        hjust = -0.1,
+        size = (5 / 14) * 16
+      )
     }
     q <- q + scale_x_continuous(stack$graphTitleX[[i]])
     q <- q + scale_y_continuous(graphTitleY)
-    q <- q + expand_limits(x=c(xMin-dif*0.10,xMax+dif*0.10))
-    q <- q + labs(title=stack$graphTitleMain[[i]])
+    q <- q + expand_limits(x = c(xMin - dif * 0.10, xMax + dif * 0.10))
+    q <- q + labs(title = stack$graphTitleMain[[i]])
     q <- q + theme_grey(base_size = 16)
-    saveA4(q,stack$graphFileName[[i]])
+    saveA4(q, stack$graphFileName[[i]])
   }
 
 

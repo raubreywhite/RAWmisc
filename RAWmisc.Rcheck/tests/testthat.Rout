@@ -18,7 +18,7 @@ Type 'q()' to quit R.
 > library(testthat)
 > library(RAWmisc)
 PACKAGE: RAWmisc
-Version 2018.10.18
+Version 
 Developed by Richard White, Norwegian Institute of Public Health
 > 
 > test_check("RAWmisc")
@@ -27,4 +27,4 @@ OK: 146 SKIPPED: 0 FAILED: 0
 > 
 > proc.time()
    user  system elapsed 
-  6.988   0.148   7.135 
+  7.292   0.144   7.438 

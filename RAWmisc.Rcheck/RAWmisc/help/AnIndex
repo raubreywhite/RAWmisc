@@ -29,6 +29,7 @@ IsInteraction	IsInteraction
 LRTest	LRTest
 MakeFootnote	MakeFootnote
 NORCHAR	NORCHAR
+PkgdownUndocumented	PkgdownUndocumented
 png_a4	png_a4
 ProcessStack	ProcessStack
 ProgressBarCreate	ProgressBarCreate

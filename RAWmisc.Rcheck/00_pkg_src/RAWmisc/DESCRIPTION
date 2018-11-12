@@ -1,18 +1,18 @@
 Package: RAWmisc
 Title: R Convenience functions
-Version: 2018.11.07
+Version: 2018.11.12
 Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
 Description: Convenience functions for a variety of purposes.
 Depends: R (>= 3.1.0)
 Imports: ggplot2, grid, maptools, rmarkdown, stringr, readxl, gmailr,
         broom, magrittr, lubridate, data.table, utils, processx, stats,
-        lmtest, MASS, uuid
+        lmtest, MASS, uuid, yaml, pkgdown
 Suggests: testthat, rms
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1
 Additional_repositories: https://raubreywhite.github.io/drat/
 NeedsCompilation: no
-Packaged: 2018-11-07 22:13:32 UTC; travis
+Packaged: 2018-11-12 15:06:42 UTC; travis
 Author: Richard White [aut, cre]
 Maintainer: Richard White <w@rwhite.no>

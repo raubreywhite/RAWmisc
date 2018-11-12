@@ -2,9 +2,7 @@
 % Please edit documentation in R/countriesNBtoEN.R
 \name{CountriesNBtoEN}
 \alias{CountriesNBtoEN}
-\title{This function returns a named vector.
-The names are Norwegian country names and the
-values are English country names.}
+\title{Norwegian to English country names}
 \usage{
 CountriesNBtoEN()
 }

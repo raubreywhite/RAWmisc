@@ -1,16 +1,15 @@
 AddEmptyRowsAtTop       AddEmptyRowsAtTop This adds empty rows to the
                         top of a data.frame
-CONFIG                  CONFIG
-CONFIG_STACK            BLAH
+CONFIG                  Environment for holding configs
+CONFIG_STACK            Environment for holding configs relevant to
+                        stack analyses
 CalcPValue              Calculates pvalues
 CopyStack               CopyStack This validates the skeleton analysis
                         stack
-CountriesNBtoEN         This function returns a named vector. The names
-                        are Norwegian country names and the values are
-                        English country names.
+CountriesNBtoEN         Norwegian to English country names
 CreateStackSkeleton     CreateStackSkeleton This creates the skeleton
                         analysis stack
-DetectInteraction       Detect interaction
+DetectInteraction       Detects interaction
 DetectSpline            Detect spline Transforms cos and sin to
                         amplitude peak and trough
 ExpandStack             ExpandStack This validates the skeleton
@@ -45,19 +44,20 @@ FormatPValue            FormatPValue This formats the results from the
 FormatResultsStack      FormatResultsStack This formats the results
                         from the stack
 FortifyShapeFile        Reads in shapefile and fortifies it
-IsFileStable            IsFileStable This determines if the file is
-                        stable (size not increasing/decreasing)
-IsInteraction           Vectorised, is the variable here an interaction
+IsFileStable            Is the file stable (size not
+                        increasing/decreasing)?
+IsInteraction           Is the variable here an interaction?
 LRTest                  LRTest Likelihood ratio test wrapper
 MakeFootnote            Makes a footnote on the bottom right hand
                         corner Taken from Mark Heckmann
                         https://ryouready.wordpress.com/2009/02/17/r-good-practice-adding-footnotes-to-graphics/
-NORCHAR                 BLAH
+NORCHAR                 Norwegian characters in unicode
+PkgdownUndocumented     PkgdownUndocumented
 ProcessStack            ProcessStack This processes one value from the
                         stack
 ProgressBarCreate       Creates a progress bar
 ProgressBarSet          Sets progress bar's progress
-RecodeDT                Allows for recoding of variables
+RecodeDT                Recoding variables in data.table
 ScaleApply              Applies as scale
 ScaleCreate             Creates a scale
 SummarizeBinary         SummarizeBinary This summarizes binary

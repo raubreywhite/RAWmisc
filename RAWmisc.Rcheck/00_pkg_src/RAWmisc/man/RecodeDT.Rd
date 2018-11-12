@@ -2,7 +2,7 @@
 % Please edit documentation in R/datatable.R
 \name{RecodeDT}
 \alias{RecodeDT}
-\title{Allows for recoding of variables}
+\title{Recoding variables in data.table}
 \usage{
 RecodeDT(d, switch, var, oldOnLeft = TRUE)
 }
@@ -16,5 +16,5 @@ RecodeDT(d, switch, var, oldOnLeft = TRUE)
 \item{oldOnLeft}{a}
 }
 \description{
-Allows for recoding of variables
+Recoding variables in data.table
 }
