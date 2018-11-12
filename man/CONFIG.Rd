@@ -3,12 +3,12 @@
 \docType{data}
 \name{CONFIG}
 \alias{CONFIG}
-\title{CONFIG}
+\title{Environment for holding configs}
 \format{An object of class \code{environment} of length 1.}
 \usage{
 CONFIG
 }
 \description{
-CONFIG
+Environment for holding configs
 }
 \keyword{datasets}

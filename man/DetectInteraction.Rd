@@ -2,7 +2,7 @@
 % Please edit documentation in R/ExtractExposureConfounders.R
 \name{DetectInteraction}
 \alias{DetectInteraction}
-\title{Detect interaction}
+\title{Detects interaction}
 \usage{
 DetectInteraction(var)
 }
@@ -10,5 +10,5 @@ DetectInteraction(var)
 \item{var}{The results}
 }
 \description{
-Detect interaction
+Detects interaction
 }

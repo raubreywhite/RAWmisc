@@ -3,12 +3,12 @@
 \docType{data}
 \name{CONFIG_STACK}
 \alias{CONFIG_STACK}
-\title{BLAH}
+\title{Environment for holding configs relevant to stack analyses}
 \format{An object of class \code{environment} of length 1.}
 \usage{
 CONFIG_STACK
 }
 \description{
-BLAH
+Environment for holding configs relevant to stack analyses
 }
 \keyword{datasets}

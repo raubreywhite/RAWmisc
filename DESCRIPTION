@@ -22,7 +22,9 @@ Imports:
   stats,
   lmtest,
   MASS,
-  uuid
+  uuid,
+  yaml,
+  pkgdown
 Suggests: testthat, rms
 License: GPL-3
 LazyData: true

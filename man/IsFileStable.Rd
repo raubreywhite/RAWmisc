@@ -2,8 +2,7 @@
 % Please edit documentation in R/FileStable.R
 \name{IsFileStable}
 \alias{IsFileStable}
-\title{IsFileStable
-This determines if the file is stable (size not increasing/decreasing)}
+\title{Is the file stable (size not increasing/decreasing)?}
 \usage{
 IsFileStable(file = tempfile(), delay = 5)
 }
@@ -13,6 +12,5 @@ IsFileStable(file = tempfile(), delay = 5)
 \item{delay}{Number of seconds between checking file size a second time}
 }
 \description{
-IsFileStable
-This determines if the file is stable (size not increasing/decreasing)
+Is the file stable (size not increasing/decreasing)?
 }

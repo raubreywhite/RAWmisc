@@ -2,7 +2,7 @@
 % Please edit documentation in R/ExtractExposureConfounders.R
 \name{IsInteraction}
 \alias{IsInteraction}
-\title{Vectorised, is the variable here an interaction}
+\title{Is the variable here an interaction?}
 \usage{
 IsInteraction(var)
 }
@@ -10,5 +10,5 @@ IsInteraction(var)
 \item{var}{The results}
 }
 \description{
-Vectorised, is the variable here an interaction
+Is the variable here an interaction?
 }

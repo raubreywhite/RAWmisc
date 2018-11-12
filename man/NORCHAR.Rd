@@ -3,12 +3,12 @@
 \docType{data}
 \name{NORCHAR}
 \alias{NORCHAR}
-\title{BLAH}
+\title{Norwegian characters in unicode}
 \format{An object of class \code{environment} of length 6.}
 \usage{
 NORCHAR
 }
 \description{
-BLAH
+Norwegian characters in unicode
 }
 \keyword{datasets}
