@@ -17,7 +17,7 @@ PkgdownUndocumented <- function(pkgroot = ".", pkgdown = file.path(pkgroot, "pkg
   if (nrow(allYAML) == 0) {
     return(TRUE)
   }
-  undocumented <- allYAML$name[!allYAML$name %in% documentedYAML]
+  undocumented <- allYAML$name[!allYAML$name %in% documented]
   if (length(undocumented) == 0) {
     return(TRUE)
   }
