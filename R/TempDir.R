@@ -14,11 +14,3 @@ TempDir <- function(file = tempfile(), delay = 5) {
 
   return(t)
 }
-
-#' FileTimeModified
-#' This determines if the file has been changed (checks modification times)
-#' @param file The file of interest
-#' @export FileTimeModified
-FileTimeModified <- function(file = tempfile()) {
-  return(file.info(file)$mtime)
-}
