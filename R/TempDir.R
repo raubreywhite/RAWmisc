@@ -4,7 +4,7 @@
 TempDir <- function(file = tempfile(), delay = 5) {
   time <- as.character(Sys.time())
   time <- gsub("[\\: ]","-",time)
-  rand <- as.character(runif(1))
+  rand <- as.character(stats::runif(1))
   rand <- gsub("[\\. ]","",rand)
   dir.create(t <- file.path(tempdir(),
                             sprintf("%s-%s-%s",
