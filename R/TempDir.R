@@ -1,7 +1,6 @@
 #' Create a new temp dir
-#'
 #' @export TempDir
-TempDir <- function(file = tempfile(), delay = 5) {
+TempDir <- function() {
   time <- as.character(Sys.time())
   time <- gsub("[\\: ]","-",time)
   rand <- as.character(stats::runif(1))

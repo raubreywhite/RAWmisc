@@ -4,7 +4,7 @@
 \alias{TempDir}
 \title{Create a new temp dir}
 \usage{
-TempDir(file = tempfile(), delay = 5)
+TempDir()
 }
 \description{
 Create a new temp dir
